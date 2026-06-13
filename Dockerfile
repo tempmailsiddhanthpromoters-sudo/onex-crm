@@ -21,9 +21,6 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Create non-root user for security
-RUN addgroup -g 1000 node && adduser -D -u 1000 -G node node
-
 # Copy pre-built node_modules from builder
 COPY --from=builder /app/node_modules ./node_modules
 
@@ -31,10 +28,10 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY onex-webhook/package.json ./
 COPY onex-webhook/src ./src
 
-# Create data directory for SQLite
+# Create data directory for SQLite and set permissions
 RUN mkdir -p data && chown -R node:node /app
 
-# Switch to non-root user
+# Switch to non-root user (node user already exists in node:20-alpine)
 USER node
 
 # Expose port
