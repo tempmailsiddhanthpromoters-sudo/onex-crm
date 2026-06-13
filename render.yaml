@@ -1,0 +1,32 @@
+# Render.com Deployment Configuration
+# https://render.com/docs/native-runtime
+
+services:
+  - type: web
+    name: onex-crm-webhook
+    runtime: node
+    plan: free
+    region: singapore
+    
+    # Build configuration
+    buildCommand: npm install --prefix onex-webhook && npm run build --prefix onex-webhook 2>/dev/null || true
+    startCommand: node onex-webhook/src/index.js
+    
+    # Environment variables (configure in Render dashboard)
+    env:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+    
+    # Auto-deploy on GitHub push
+    autoDeploy: true
+    
+    # Health check
+    healthCheckPath: /api/admin/health
+    
+    # Root directory
+    rootDir: ./
+    
+    # Restart policy
+    restartPolicyType: on_failure
