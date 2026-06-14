@@ -1,16 +1,12 @@
 # Render.com Deployment Configuration
-# https://render.com/docs/native-runtime
+# Docker-based deployment for OneX CRM backend
 
 services:
   - type: web
     name: onex-crm-webhook
-    runtime: node
+    runtime: docker
     plan: free
     region: singapore
-    
-    # Build configuration
-    buildCommand: npm install --prefix onex-webhook
-    startCommand: node onex-webhook/src/indexEnhanced.js
     
     # Environment variables (configure in Render dashboard)
     env:
@@ -25,8 +21,8 @@ services:
     # Health check
     healthCheckPath: /api/admin/health
     
-    # Root directory
-    rootDir: ./
+    # Docker configuration
+    dockerfile: Dockerfile
     
     # Restart policy
     restartPolicyType: on_failure
