@@ -59,6 +59,7 @@ onex-crm/
 │   │   ├── services/
 │   │   │   ├── zoho.js           # Zoho CRM OAuth2 + lead creation
 │   │   │   ├── aisensy.js        # WhatsApp API integration
+│   │   │   ├── telegram.js       # Telegram bot notifications
 │   │   │   ├── database.js       # SQLite persistence
 │   │   │   └── settingsManager.js # Config management
 │   │   └── middleware/

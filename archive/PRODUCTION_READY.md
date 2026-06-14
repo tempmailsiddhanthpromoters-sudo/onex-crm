@@ -42,16 +42,16 @@ Complete, scalable, production-ready automation system for real estate leads:
 
 ### Zoho CRM
 ```
-Client ID:     1000.8N2NV1KRHLXAF5ETDAPFDKVDEKY4KG
-Client Secret: 46f324f184d8c34acb60fa50bfb94e00c725284afd
+Client ID:     [FROM ZOHO API CONSOLE]
+Client Secret: [FROM ZOHO API CONSOLE]
 Refresh Token: [NEED TO GENERATE - Zoho API Console]
 Region:        .in (India) - accounts.zoho.in / www.zohoapis.in
 ```
 
 ### Telegram Bot
 ```
-Token:  8792849495:AAEEoUHlvtvECkwpUJ5Fem9UfmNUXSI7ozE ✓
-Chat ID: 5740904900 ✓
+Token:  [GET FROM @BotFather ON TELEGRAM]
+Chat ID: [YOUR TELEGRAM CHAT ID]
 ```
 
 ### AISensy (WhatsApp)
@@ -117,10 +117,10 @@ Username:             OneX CRM
    - Paste backend URL (from Step 2)
    - Click "Test Connection" → Should show ✓
 
-2. **Zoho Credentials**
+2.    **Zoho Credentials**
    ```
-   Client ID:     1000.8N2NV1KRHLXAF5ETDAPFDKVDEKY4KG
-   Client Secret: 46f324f184d8c34acb60fa50bfb94e00c725284afd
+   Client ID:     [FROM ZOHO API CONSOLE]
+   Client Secret: [FROM ZOHO API CONSOLE]
    Refresh Token: [From Step 1]
    Region:        .in (if Indian account)
    ```
@@ -136,8 +136,8 @@ Username:             OneX CRM
 
 4. **Telegram Alerts** (Optional)
    ```
-   Token: 8792849495:AAEEoUHlvtvECkwpUJ5Fem9UfmNUXSI7ozE
-   Chat:  5740904900
+   Token: [Your Telegram Bot Token]
+   Chat:  [Your Telegram Chat ID]
    ```
 
 5. **Email Alerts** (Optional)

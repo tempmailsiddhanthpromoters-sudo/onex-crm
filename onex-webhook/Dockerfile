@@ -15,7 +15,7 @@ WORKDIR /app
 RUN apk add --no-cache python3 make g++
 
 COPY package.json package-lock.json* ./
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci --omit=dev && npm cache clean --force
 
 # ── Stage 2: Runtime ────────────────────────────────────────────────
 FROM node:20-alpine
@@ -40,6 +40,6 @@ USER appuser
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-  CMD wget --no-verbose --spider http://localhost:3000/health || exit 1
+  CMD wget --no-verbose --spider http://localhost:3000/api/admin/health || exit 1
 
-CMD ["node", "src/index.js"]
+CMD ["node", "src/indexEnhanced.js"]

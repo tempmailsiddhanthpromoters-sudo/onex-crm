@@ -1,0 +1,2563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneX CRM - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --sidebar-width: 260px;
+            --header-height: 64px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-section {
+            margin-bottom: 1rem;
+        }
+
+        .nav-section-title {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background-color: #f1f5f9;
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background-color: #eff6ff;
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .nav-item-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.75rem;
+            opacity: 0.7;
+        }
+
+        .nav-item.active .nav-item-icon {
+            opacity: 1;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            height: var(--header-height);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: #f1f5f9;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-change {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            color: var(--danger);
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        td {
+            font-size: 0.875rem;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-gray {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--surface);
+            border-radius: 0.75rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Alert */
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border: 1px solid #fde68a;
+            color: #92400e;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .header {
+                padding: 0 1rem;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border);
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        .toggle input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state-subtext {
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>OneX CRM</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a class="nav-item active" data-screen="dashboard">
+                        <span class="nav-item-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a class="nav-item" data-screen="leads">
+                        <span class="nav-item-icon">👥</span>
+                        Leads
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Integrations</div>
+                    <a class="nav-item" data-screen="integrations">
+                        <span class="nav-item-icon">🔗</span>
+                        Integrations
+                    </a>
+                    <a class="nav-item" data-screen="field-mapping">
+                        <span class="nav-item-icon">🔄</span>
+                        Field Mapping
+                    </a>
+                    <a class="nav-item" data-screen="routing-rules">
+                        <span class="nav-item-icon">⚡</span>
+                        Routing Rules
+                    </a>
+                    <a class="nav-item" data-screen="zoho">
+                        <span class="nav-item-icon">📱</span>
+                        Zoho
+                    </a>
+                    <a class="nav-item" data-screen="aisensy">
+                        <span class="nav-item-icon">💬</span>
+                        AiSensy
+                    </a>
+                    <a class="nav-item" data-screen="telegram">
+                        <span class="nav-item-icon">✈️</span>
+                        Telegram
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a class="nav-item" data-screen="users">
+                        <span class="nav-item-icon">👤</span>
+                        Users
+                    </a>
+                    <a class="nav-item" data-screen="settings">
+                        <span class="nav-item-icon">⚙️</span>
+                        Settings
+                    </a>
+                    <a class="nav-item" data-screen="audit-logs">
+                        <span class="nav-item-icon">📋</span>
+                        Audit Logs
+                    </a>
+                    <a class="nav-item" data-screen="sync-monitor">
+                        <span class="nav-item-icon">🔄</span>
+                        Sync Monitor
+                    </a>
+                    <a class="nav-item" data-screen="system-health">
+                        <span class="nav-item-icon">💚</span>
+                        System Health
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-title" id="headerTitle">Dashboard</div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary btn-sm" id="refreshBtn">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Dashboard Screen -->
+                <div class="screen active" id="screen-dashboard">
+                    <div class="stats-grid" id="dashboardStats">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Leads</div>
+                            <div class="stat-value" id="statTotalLeads">-</div>
+                            <div class="stat-change positive" id="statTodayLeads">0 today</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">This Week</div>
+                            <div class="stat-value" id="statWeekLeads">-</div>
+                            <div class="stat-change" id="statWeekChange">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">This Month</div>
+                            <div class="stat-value" id="statMonthLeads">-</div>
+                            <div class="stat-change" id="statMonthChange">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Conversion Rate</div>
+                            <div class="stat-value" id="statConversion">-</div>
+                            <div class="stat-change" id="statConversionChange">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">WhatsApp Sent</div>
+                            <div class="stat-value" id="statWASent">-</div>
+                            <div class="stat-change" id="statWAStatus">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Revenue</div>
+                            <div class="stat-value" id="statRevenue">-</div>
+                            <div class="stat-change" id="statRevenueChange">-</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Recent Leads</h3>
+                        </div>
+                        <div class="table-container">
+                            <table id="recentLeadsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Lead ID</th>
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>Source</th>
+                                        <th>Status</th>
+                                        <th>Assigned To</th>
+                                        <th>Created</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentLeadsBody">
+                                    <tr><td colspan="7" class="empty-state">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Top Performing Sources</h3>
+                        </div>
+                        <div id="topSources"></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Top Performing Agents</h3>
+                        </div>
+                        <div id="topAgents"></div>
+                    </div>
+                </div>
+
+                <!-- Leads Screen -->
+                <div class="screen" id="screen-leads">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Lead Management</h3>
+                            <button class="btn btn-primary" id="bulkUpdateBtn">Bulk Update</button>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" class="form-input" id="leadSearch" placeholder="Search leads...">
+                            </div>
+                            <div class="form-group">
+                                <select class="form-select" id="leadSourceFilter">
+                                    <option value="">All Sources</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select class="form-select" id="leadStatusFilter">
+                                    <option value="">All Statuses</option>
+                                    <option value="New">New</option>
+                                    <option value="Contacted">Contacted</option>
+                                    <option value="Qualified">Qualified</option>
+                                    <option value="Booked">Booked</option>
+                                    <option value="Lost">Lost</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select class="form-select" id="leadAssignedFilter">
+                                    <option value="">All Agents</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-container">
+                            <table id="leadsTable">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="selectAllLeads"></th>
+                                        <th>Lead ID</th>
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>Source</th>
+                                        <th>Status</th>
+                                        <th>Assigned To</th>
+                                        <th>WA Status</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leadsBody">
+                                    <tr><td colspan="11" class="empty-state">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-header">
+                            <div id="leadsPagination"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Integrations Screen -->
+                <div class="screen" id="screen-integrations">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Dynamic Integration Builder</h3>
+                            <button class="btn btn-primary" id="createIntegrationBtn">+ New Integration</button>
+                        </div>
+                        <div class="table-container">
+                            <table id="integrationsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Slug</th>
+                                        <th>Type</th>
+                                        <th>Priority</th>
+                                        <th>Retry Count</th>
+                                        <th>Timeout</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="integrationsBody">
+                                    <tr><td colspan="8" class="empty-state">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Webhook URLs</h3>
+                        </div>
+                        <div id="webhookUrls"></div>
+                    </div>
+                </div>
+
+                <!-- Field Mapping Screen -->
+                <div class="screen" id="screen-field-mapping">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Field Mapping Configuration</h3>
+                            <button class="btn btn-primary" id="createFieldMappingBtn">+ New Mapping</button>
+                        </div>
+                        <div class="table-container">
+                            <table id="fieldMappingsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Mapping Count</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fieldMappingsBody">
+                                    <tr><td colspan="4" class="empty-state">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Routing Rules Screen -->
+                <div class="screen" id="screen-routing-rules">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Routing Rules</h3>
+                            <button class="btn btn-primary" id="createRoutingRuleBtn">+ New Rule</button>
+                        </div>
+                        <div class="table-container">
+                            <table id="routingRulesTable">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Priority</th>
+                                        <th>Conditions</th>
+                                        <th>Actions</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="routingRulesBody">
+                                    <tr><td colspan="6" class="empty-state">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zoho Screen -->
+                <div class="screen" id="screen-zoho">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Zoho CRM Integration</h3>
+                            <div>
+                                <button class="btn btn-secondary" id="testZohoBtn">Test Connection</button>
+                                <button class="btn btn-primary" id="refreshZohoTokenBtn">Refresh Token</button>
+                            </div>
+                        </div>
+                        <div id="zohoConfigForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Client ID</label>
+                                    <input type="text" class="form-input" id="zohoClientId">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Client Secret</label>
+                                    <input type="password" class="form-input" id="zohoClientSecret">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Refresh Token</label>
+                                    <input type="password" class="form-input" id="zohoRefreshToken">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Token URL</label>
+                                    <input type="text" class="form-input" id="zohoTokenUrl">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">API URL</label>
+                                <input type="text" class="form-input" id="zohoApiUrl">
+                            </div>
+                            <button class="btn btn-primary" id="saveZohoConfigBtn">Save Configuration</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Zoho Sync Logs</h3>
+                        </div>
+                        <div class="table-container">
+                            <table id="zohoSyncLogsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Action</th>
+                                        <th>Lead ID</th>
+                                        <th>Status</th>
+                                        <th>Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="zohoSyncLogsBody">
+                                    <tr><td colspan="5" class="empty-state">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AiSensy Screen -->
+                <div class="screen" id="screen-aisensy">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">AiSensy WhatsApp Integration</h3>
+                            <div>
+                                <button class="btn btn-secondary" id="testAiSensyBtn">Test Connection</button>
+                                <button class="btn btn-success" id="enableAiSensyBtn">Enable</button>
+                                <button class="btn btn-danger" id="disableAiSensyBtn">Disable</button>
+                            </div>
+                        </div>
+                        <div id="aisensyConfigForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">API Key</label>
+                                    <input type="password" class="form-input" id="aisensyApiKey">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Campaign Name</label>
+                                    <input type="text" class="form-input" id="aisensyCampaignName">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Destination</label>
+                                    <input type="text" class="form-input" id="aisensyDestination">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">User Name</label>
+                                    <input type="text" class="form-input" id="aisensyUserName">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Send Test Message</label>
+                                <div class="form-row">
+                                    <input type="text" class="form-input" id="aisensyTestPhone" placeholder="Phone Number">
+                                    <button class="btn btn-primary" id="sendAiSensyTestBtn">Send Test</button>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" id="saveAiSensyConfigBtn">Save Configuration</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">AiSensy Logs</h3>
+                        </div>
+                        <div class="table-container">
+                            <table id="aisensyLogsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Action</th>
+                                        <th>Status</th>
+                                        <th>Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="aisensyLogsBody">
+                                    <tr><td colspan="4" class="empty-state">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Telegram Screen -->
+                <div class="screen" id="screen-telegram">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Telegram Integration</h3>
+                            <div>
+                                <button class="btn btn-secondary" id="testTelegramBtn">Test Connection</button>
+                                <button class="btn btn-secondary" id="getTelegramBotInfoBtn">Bot Info</button>
+                                <button class="btn btn-success" id="enableTelegramBtn">Enable</button>
+                                <button class="btn btn-danger" id="disableTelegramBtn">Disable</button>
+                            </div>
+                        </div>
+                        <div id="telegramConfigForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Bot Token</label>
+                                    <input type="password" class="form-input" id="telegramBotToken">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Chat ID</label>
+                                    <input type="text" class="form-input" id="telegramChatId">
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" id="sendTelegramTestBtn">Send Test Message</button>
+                            <button class="btn btn-primary" id="saveTelegramConfigBtn">Save Configuration</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Telegram Logs</h3>
+                        </div>
+                        <div class="table-container">
+                            <table id="telegramLogsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Action</th>
+                                        <th>Status</th>
+                                        <th>Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="telegramLogsBody">
+                                    <tr><td colspan="4" class="empty-state">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Screen -->
+                <div class="screen" id="screen-users">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">User Management</h3>
+                            <button class="btn btn-primary" id="createUserBtn">+ New User</button>
+                        </div>
+                        <div class="table-container">
+                            <table id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Phone</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersBody">
+                                    <tr><td colspan="6" class="empty-state">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">User Roles</h3>
+                        </div>
+                        <div id="userRoles"></div>
+                    </div>
+                </div>
+
+                <!-- Settings Screen -->
+                <div class="screen" id="screen-settings">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="general">General</div>
+                        <div class="tab" data-tab="server">Server</div>
+                        <div class="tab" data-tab="features">Features</div>
+                        <div class="tab" data-tab="node-backend">Node Backend</div>
+                    </div>
+
+                    <div class="tab-content" id="tab-general">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">General Settings</h3>
+                                <button class="btn btn-primary" id="saveGeneralSettingsBtn">Save</button>
+                            </div>
+                            <div id="generalSettingsForm"></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-server" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Server Settings</h3>
+                                <button class="btn btn-primary" id="saveServerSettingsBtn">Save</button>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Rate Limit Enabled</label>
+                                    <label class="toggle">
+                                        <input type="checkbox" id="rateLimitEnabled">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Max Requests</label>
+                                    <input type="number" class="form-input" id="rateLimitMaxRequests">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Rate Limit Window (ms)</label>
+                                    <input type="number" class="form-input" id="rateLimitWindowMs">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Default Retry Count</label>
+                                    <input type="number" class="form-input" id="retryCount">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Default Timeout (ms)</label>
+                                    <input type="number" class="form-input" id="timeoutMs">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Webhook Secret</label>
+                                    <input type="password" class="form-input" id="webhookSecret">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-features" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Feature Flags</h3>
+                                <button class="btn btn-primary" id="saveFeatureFlagsBtn">Save</button>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Zoho Auto Sync</label>
+                                <label class="toggle">
+                                    <input type="checkbox" id="zohoAutoSync">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">AiSensy Auto Send</label>
+                                <label class="toggle">
+                                    <input type="checkbox" id="aisensyAutoSend">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Telegram Auto Notify</label>
+                                <label class="toggle">
+                                    <input type="checkbox" id="telegramAutoNotify">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">GAS Auto Sync</label>
+                                <label class="toggle">
+                                    <input type="checkbox" id="gasAutoSync">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Sheet Auto Sync</label>
+                                <label class="toggle">
+                                    <input type="checkbox" id="sheetAutoSync">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-node-backend" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Node Backend Connection</h3>
+                                <button class="btn btn-secondary" id="testNodeBackendBtn">Test Connection</button>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Node API URL</label>
+                                <input type="text" class="form-input" id="nodeApiUrl" placeholder="http://localhost:3000">
+                            </div>
+                            <button class="btn btn-primary" id="setNodeApiUrlBtn">Set URL</button>
+                            <div id="nodeBackendStatus" style="margin-top: 1rem;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audit Logs Screen -->
+                <div class="screen" id="screen-audit-logs">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Audit Logs</h3>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <select class="form-select" id="auditActionFilter">
+                                    <option value="">All Actions</option>
+                                    <option value="create">Create</option>
+                                    <option value="update">Update</option>
+                                    <option value="delete">Delete</option>
+                                    <option value="sync">Sync</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select class="form-select" id="auditEntityTypeFilter">
+                                    <option value="">All Entities</option>
+                                    <option value="lead">Lead</option>
+                                    <option value="user">User</option>
+                                    <option value="integration">Integration</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table id="auditLogsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Action</th>
+                                        <th>Entity Type</th>
+                                        <th>Entity ID</th>
+                                        <th>User</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="auditLogsBody">
+                                    <tr><td colspan="6" class="empty-state">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sync Monitor Screen -->
+                <div class="screen" id="screen-sync-monitor">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Sync Status</h3>
+                        </div>
+                        <div id="syncStatus"></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Sync History</h3>
+                        </div>
+                        <div class="table-container">
+                            <table id="syncHistoryTable">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Action</th>
+                                        <th>Status</th>
+                                        <th>Details</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="syncHistoryBody">
+                                    <tr><td colspan="5" class="empty-state">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Health Screen -->
+                <div class="screen" id="screen-system-health">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Node Status</div>
+                            <div class="stat-value" id="healthNodeStatus">-</div>
+                            <div class="stat-change" id="healthNodeUptime">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Database Status</div>
+                            <div class="stat-value" id="healthDbStatus">-</div>
+                            <div class="stat-change" id="healthDbInfo">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">System Uptime</div>
+                            <div class="stat-value" id="healthUptime">-</div>
+                            <div class="stat-change" id="healthTimestamp">-</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">System Metrics</h3>
+                        </div>
+                        <div id="systemMetrics"></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Database Statistics</h3>
+                        </div>
+                        <div id="databaseStats"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Modal Title</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be injected here -->
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
+                <button class="btn btn-primary" id="modalSaveBtn">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Client
+        const API = {
+            async call(action, payload = {}) {
+                try {
+                    const response = await google.script.run
+                        .withSuccessHandler(result => {
+                            if (result.success) {
+                                return result.data;
+                            } else {
+                                throw new Error(result.message || 'API call failed');
+                            }
+                        })
+                        .withFailureHandler(error => {
+                            throw error;
+                        })
+                        .handleAdminActionEnhanced({ _adminAction: action, ...payload });
+                    
+                    return response;
+                } catch (error) {
+                    console.error('API Error:', error);
+                    throw error;
+                }
+            }
+        };
+
+        // State Management
+        const State = {
+            currentScreen: 'dashboard',
+            leads: [],
+            integrations: [],
+            fieldMappings: [],
+            routingRules: [],
+            users: [],
+            auditLogs: [],
+            syncHistory: []
+        };
+
+        // UI Helpers
+        const UI = {
+            showLoading(element) {
+                element.innerHTML = '<tr><td colspan="10" class="empty-state"><div class="spinner"></div> Loading...</td></tr>';
+            },
+
+            showError(element, message) {
+                element.innerHTML = `<tr><td colspan="10" class="empty-state alert alert-error">${message}</td></tr>`;
+            },
+
+            showEmpty(element, message = 'No data available') {
+                element.innerHTML = `<tr><td colspan="10" class="empty-state">${message}</td></tr>`;
+            },
+
+            showAlert(message, type = 'info') {
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type}`;
+                alert.textContent = message;
+                document.querySelector('.content-area').insertBefore(alert, document.querySelector('.content-area').firstChild);
+                setTimeout(() => alert.remove(), 5000);
+            },
+
+            openModal(title, body, onSave) {
+                document.getElementById('modalTitle').textContent = title;
+                document.getElementById('modalBody').innerHTML = body;
+                document.getElementById('modalOverlay').classList.add('active');
+                
+                const saveBtn = document.getElementById('modalSaveBtn');
+                saveBtn.onclick = async () => {
+                    try {
+                        await onSave();
+                        document.getElementById('modalOverlay').classList.remove('active');
+                    } catch (error) {
+                        UI.showAlert(error.message, 'error');
+                    }
+                };
+            },
+
+            closeModal() {
+                document.getElementById('modalOverlay').classList.remove('active');
+            }
+        };
+
+        // Screen Management
+        function switchScreen(screenName) {
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.screen === screenName) {
+                    item.classList.add('active');
+                }
+            });
+
+            // Update screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(`screen-${screenName}`).classList.add('active');
+
+            // Update header
+            const titles = {
+                'dashboard': 'Dashboard',
+                'leads': 'Lead Management',
+                'integrations': 'Integrations',
+                'field-mapping': 'Field Mapping',
+                'routing-rules': 'Routing Rules',
+                'zoho': 'Zoho CRM',
+                'aisensy': 'AiSensy WhatsApp',
+                'telegram': 'Telegram',
+                'users': 'User Management',
+                'settings': 'Settings',
+                'audit-logs': 'Audit Logs',
+                'sync-monitor': 'Sync Monitor',
+                'system-health': 'System Health'
+            };
+            document.getElementById('headerTitle').textContent = titles[screenName] || 'Dashboard';
+
+            State.currentScreen = screenName;
+            loadScreenData(screenName);
+        }
+
+        // Load screen data
+        async function loadScreenData(screenName) {
+            try {
+                switch (screenName) {
+                    case 'dashboard':
+                        await loadDashboard();
+                        break;
+                    case 'leads':
+                        await loadLeads();
+                        break;
+                    case 'integrations':
+                        await loadIntegrations();
+                        break;
+                    case 'field-mapping':
+                        await loadFieldMappings();
+                        break;
+                    case 'routing-rules':
+                        await loadRoutingRules();
+                        break;
+                    case 'zoho':
+                        await loadZohoConfig();
+                        break;
+                    case 'aisensy':
+                        await loadAiSensyConfig();
+                        break;
+                    case 'telegram':
+                        await loadTelegramConfig();
+                        break;
+                    case 'users':
+                        await loadUsers();
+                        break;
+                    case 'settings':
+                        await loadSettings();
+                        break;
+                    case 'audit-logs':
+                        await loadAuditLogs();
+                        break;
+                    case 'sync-monitor':
+                        await loadSyncMonitor();
+                        break;
+                    case 'system-health':
+                        await loadSystemHealth();
+                        break;
+                }
+            } catch (error) {
+                UI.showAlert(`Error loading ${screenName}: ${error.message}`, 'error');
+            }
+        }
+
+        // Dashboard
+        async function loadDashboard() {
+            const data = await API.call('getDashboardData');
+            const summary = data.summary;
+
+            document.getElementById('statTotalLeads').textContent = summary.total;
+            document.getElementById('statTodayLeads').textContent = `${summary.todayCount} today`;
+            document.getElementById('statWeekLeads').textContent = summary.weekCount;
+            document.getElementById('statMonthLeads').textContent = summary.monthCount;
+            document.getElementById('statConversion').textContent = `${summary.conversionRate}%`;
+            document.getElementById('statWASent').textContent = summary.wasSent;
+            document.getElementById('statRevenue').textContent = `₹${summary.revenue.toLocaleString()}`;
+
+            // Recent leads
+            const tbody = document.getElementById('recentLeadsBody');
+            if (data.recentLeads && data.recentLeads.length > 0) {
+                tbody.innerHTML = data.recentLeads.map(lead => `
+                    <tr>
+                        <td>${lead.leadId}</td>
+                        <td>${lead.name}</td>
+                        <td>${lead.phone}</td>
+                        <td>${lead.source}</td>
+                        <td><span class="badge badge-info">${lead.status}</span></td>
+                        <td>${lead.assignedTo || '-'}</td>
+                        <td>${new Date(lead.created).toLocaleDateString()}</td>
+                    </tr>
+                `).join('');
+            } else {
+                UI.showEmpty(tbody, 'No recent leads');
+            }
+
+            // Top sources
+            const topSources = document.getElementById('topSources');
+            const sourceEntries = Object.entries(data.sourceCounts || {}).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            topSources.innerHTML = sourceEntries.map(([source, count]) => `
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+                    <span>${source}</span>
+                    <span><strong>${count}</strong></span>
+                </div>
+            `).join('');
+
+            // Top agents
+            const topAgents = document.getElementById('topAgents');
+            const agentEntries = Object.entries(data.agentCounts || {}).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            topAgents.innerHTML = agentEntries.map(([agent, count]) => `
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+                    <span>${agent}</span>
+                    <span><strong>${count}</strong></span>
+                </div>
+            `).join('');
+        }
+
+        // Leads
+        async function loadLeads() {
+            const data = await API.call('getLeads', { page: 1, limit: 50 });
+            State.leads = data.leads;
+
+            const tbody = document.getElementById('leadsBody');
+            if (data.leads && data.leads.length > 0) {
+                tbody.innerHTML = data.leads.map(lead => `
+                    <tr>
+                        <td><input type="checkbox" class="lead-checkbox" data-id="${lead.leadId}"></td>
+                        <td>${lead.leadId}</td>
+                        <td>${lead.name}</td>
+                        <td>${lead.phone}</td>
+                        <td>${lead.email || '-'}</td>
+                        <td>${lead.source}</td>
+                        <td><span class="badge badge-${getStatusBadgeClass(lead.status)}">${lead.status}</span></td>
+                        <td>${lead.assignedTo || '-'}</td>
+                        <td><span class="badge badge-${lead.waStatus === 'SENT' ? 'success' : 'gray'}">${lead.waStatus || '-'}</span></td>
+                        <td>${new Date(lead.createdAt).toLocaleDateString()}</td>
+                        <td>
+                            <button class="btn btn-sm btn-secondary" onclick="viewLeadDetail('${lead.leadId}')">View</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                UI.showEmpty(tbody, 'No leads found');
+            }
+
+            // Populate filters
+            const sources = [...new Set(data.leads.map(l => l.source).filter(Boolean))];
+            document.getElementById('leadSourceFilter').innerHTML = '<option value="">All Sources</option>' + 
+                sources.map(s => `<option value="${s}">${s}</option>`).join('');
+
+            const agents = [...new Set(data.leads.map(l => l.assignedTo).filter(Boolean))];
+            document.getElementById('leadAssignedFilter').innerHTML = '<option value="">All Agents</option>' + 
+                agents.map(a => `<option value="${a}">${a}</option>`).join('');
+        }
+
+        function getStatusBadgeClass(status) {
+            const classes = {
+                'New': 'info',
+                'Contacted': 'warning',
+                'Qualified': 'success',
+                'Booked': 'success',
+                'Lost': 'danger'
+            };
+            return classes[status] || 'gray';
+        }
+
+        async function viewLeadDetail(leadId) {
+            const lead = await API.call('getLeadDetail', { leadId });
+            const timeline = await API.call('getLeadTimeline', { leadId });
+
+            const body = `
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" id="editLeadName" value="${lead.name || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="editLeadStatus">
+                        <option value="New" ${lead.status === 'New' ? 'selected' : ''}>New</option>
+                        <option value="Contacted" ${lead.status === 'Contacted' ? 'selected' : ''}>Contacted</option>
+                        <option value="Qualified" ${lead.status === 'Qualified' ? 'selected' : ''}>Qualified</option>
+                        <option value="Booked" ${lead.status === 'Booked' ? 'selected' : ''}>Booked</option>
+                        <option value="Lost" ${lead.status === 'Lost' ? 'selected' : ''}>Lost</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Assigned To</label>
+                    <input type="text" class="form-input" id="editLeadAssignedTo" value="${lead.assignedTo || ''}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea class="form-textarea" id="editLeadNotes">${lead.notes || ''}</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Timeline</label>
+                    <div style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); padding: 1rem; border-radius: 0.5rem;">
+                        ${timeline.timeline ? timeline.timeline.map(event => `
+                            <div style="padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+                                <strong>${event.event_type}</strong> - ${new Date(event.performed_at).toLocaleString()}
+                                <br><small>${JSON.stringify(event.event_data)}</small>
+                            </div>
+                        `).join('') : 'No timeline data'}
+                    </div>
+                </div>
+            `;
+
+            UI.openModal('Edit Lead', body, async () => {
+                await API.call('updateLead', {
+                    leadId: leadId,
+                    name: document.getElementById('editLeadName').value,
+                    status: document.getElementById('editLeadStatus').value,
+                    assignedTo: document.getElementById('editLeadAssignedTo').value,
+                    notes: document.getElementById('editLeadNotes').value
+                });
+                UI.showAlert('Lead updated successfully', 'success');
+                loadLeads();
+            });
+        }
+
+        // Integrations
+        async function loadIntegrations() {
+            const data = await API.call('getIntegrations');
+            State.integrations = data.integrations || [];
+
+            const tbody = document.getElementById('integrationsBody');
+            if (State.integrations.length > 0) {
+                tbody.innerHTML = State.integrations.map(int => `
+                    <tr>
+                        <td>${int.name}</td>
+                        <td>${int.slug}</td>
+                        <td>${int.source_type}</td>
+                        <td>${int.priority}</td>
+                        <td>${int.retry_count}</td>
+                        <td>${int.timeout_ms}ms</td>
+                        <td><span class="badge badge-${int.enabled ? 'success' : 'gray'}">${int.enabled ? 'Enabled' : 'Disabled'}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-secondary" onclick="testIntegration('${int.slug}')">Test</button>
+                            <button class="btn btn-sm btn-secondary" onclick="editIntegration('${int.id}')">Edit</button>
+                            <button class="btn btn-sm btn-${int.enabled ? 'danger' : 'success'}" onclick="${int.enabled ? 'disableIntegration' : 'enableIntegration'}('${int.id}')">
+                                ${int.enabled ? 'Disable' : 'Enable'}
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteIntegration('${int.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                UI.showEmpty(tbody, 'No integrations configured');
+            }
+
+            // Webhook URLs
+            const webhooks = await API.call('getWebhookUrls');
+            const webhookUrls = document.getElementById('webhookUrls');
+            if (webhooks.webhooks && webhooks.webhooks.length > 0) {
+                webhookUrls.innerHTML = webhooks.webhooks.map(w => `
+                    <div style="padding: 0.75rem; background: #f8fafc; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+                        <strong>${w.name}</strong>: <code>${w.url}</code>
+                    </div>
+                `).join('');
+            } else {
+                webhookUrls.innerHTML = '<p class="empty-state">No webhook URLs available</p>';
+            }
+        }
+
+        async function createIntegration() {
+            const body = `
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" id="integrationName">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Slug</label>
+                    <input type="text" class="form-input" id="integrationSlug">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Webhook Type</label>
+                    <select class="form-select" id="integrationWebhookType">
+                        <option value="webhook">Webhook</option>
+                        <option value="api">API</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Priority</label>
+                        <input type="number" class="form-input" id="integrationPriority" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Retry Count</label>
+                        <input type="number" class="form-input" id="integrationRetryCount" value="3">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Timeout (ms)</label>
+                    <input type="number" class="form-input" id="integrationTimeout" value="30000">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Webhook Secret</label>
+                    <input type="password" class="form-input" id="integrationWebhookSecret">
+                </div>
+            `;
+
+            UI.openModal('Create Integration', body, async () => {
+                await API.call('createIntegration', {
+                    name: document.getElementById('integrationName').value,
+                    slug: document.getElementById('integrationSlug').value,
+                    webhookType: document.getElementById('integrationWebhookType').value,
+                    priority: document.getElementById('integrationPriority').value,
+                    retryCount: document.getElementById('integrationRetryCount').value,
+                    timeout: document.getElementById('integrationTimeout').value,
+                    webhookSecret: document.getElementById('integrationWebhookSecret').value
+                });
+                UI.showAlert('Integration created successfully', 'success');
+                loadIntegrations();
+            });
+        }
+
+        async function testIntegration(slug) {
+            try {
+                await API.call('testIntegration', { slug });
+                UI.showAlert('Integration test successful', 'success');
+            } catch (error) {
+                UI.showAlert(`Integration test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function enableIntegration(id) {
+            await API.call('enableIntegration', { id });
+            UI.showAlert('Integration enabled', 'success');
+            loadIntegrations();
+        }
+
+        async function disableIntegration(id) {
+            await API.call('disableIntegration', { id });
+            UI.showAlert('Integration disabled', 'success');
+            loadIntegrations();
+        }
+
+        async function deleteIntegration(id) {
+            if (confirm('Are you sure you want to delete this integration?')) {
+                await API.call('deleteIntegration', { id });
+                UI.showAlert('Integration deleted', 'success');
+                loadIntegrations();
+            }
+        }
+
+        // Field Mappings
+        async function loadFieldMappings() {
+            const data = await API.call('getFieldMappings');
+            State.fieldMappings = data.mappings || [];
+
+            const tbody = document.getElementById('fieldMappingsBody');
+            if (State.fieldMappings.length > 0) {
+                tbody.innerHTML = State.fieldMappings.map(mapping => `
+                    <tr>
+                        <td>${mapping.name}</td>
+                        <td>${mapping.description || '-'}</td>
+                        <td>${mapping.mappings ? Object.keys(mapping.mappings).length : 0}</td>
+                        <td>
+                            <button class="btn btn-sm btn-secondary" onclick="editFieldMapping('${mapping.id}')">Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteFieldMapping('${mapping.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                UI.showEmpty(tbody, 'No field mappings configured');
+            }
+        }
+
+        async function createFieldMapping() {
+            const body = `
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" id="fieldMappingName">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="fieldMappingDescription"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mappings (JSON)</label>
+                    <textarea class="form-textarea" id="fieldMappingMappings" placeholder='{"source_field": "target_field"}'></textarea>
+                </div>
+            `;
+
+            UI.openModal('Create Field Mapping', body, async () => {
+                let mappings;
+                try {
+                    mappings = JSON.parse(document.getElementById('fieldMappingMappings').value);
+                } catch (e) {
+                    throw new Error('Invalid JSON format for mappings');
+                }
+
+                await API.call('createFieldMapping', {
+                    name: document.getElementById('fieldMappingName').value,
+                    description: document.getElementById('fieldMappingDescription').value,
+                    mappings: mappings
+                });
+                UI.showAlert('Field mapping created successfully', 'success');
+                loadFieldMappings();
+            });
+        }
+
+        async function deleteFieldMapping(id) {
+            if (confirm('Are you sure you want to delete this field mapping?')) {
+                await API.call('deleteFieldMapping', { id });
+                UI.showAlert('Field mapping deleted', 'success');
+                loadFieldMappings();
+            }
+        }
+
+        // Routing Rules
+        async function loadRoutingRules() {
+            const data = await API.call('getRoutingRules');
+            State.routingRules = data.rules || [];
+
+            const tbody = document.getElementById('routingRulesBody');
+            if (State.routingRules.length > 0) {
+                tbody.innerHTML = State.routingRules.map(rule => `
+                    <tr>
+                        <td>${rule.name}</td>
+                        <td>${rule.priority}</td>
+                        <td>${rule.conditions ? rule.conditions.length : 0} conditions</td>
+                        <td>${rule.actions ? rule.actions.length : 0} actions</td>
+                        <td><span class="badge badge-${rule.enabled ? 'success' : 'gray'}">${rule.enabled ? 'Enabled' : 'Disabled'}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-secondary" onclick="editRoutingRule('${rule.id}')">Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteRoutingRule('${rule.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                UI.showEmpty(tbody, 'No routing rules configured');
+            }
+        }
+
+        async function createRoutingRule() {
+            const body = `
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" id="routingRuleName">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Priority</label>
+                    <input type="number" class="form-input" id="routingRulePriority" value="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Conditions (JSON)</label>
+                    <textarea class="form-textarea" id="routingRuleConditions" placeholder='[{"field": "source", "operator": "equals", "value": "website"}]'></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Actions (JSON)</label>
+                    <textarea class="form-textarea" id="routingRuleActions" placeholder='[{"type": "assign", "value": "agent1"}]'></textarea>
+                </div>
+            `;
+
+            UI.openModal('Create Routing Rule', body, async () => {
+                let conditions, actions;
+                try {
+                    conditions = JSON.parse(document.getElementById('routingRuleConditions').value);
+                    actions = JSON.parse(document.getElementById('routingRuleActions').value);
+                } catch (e) {
+                    throw new Error('Invalid JSON format');
+                }
+
+                await API.call('createRoutingRule', {
+                    name: document.getElementById('routingRuleName').value,
+                    priority: document.getElementById('routingRulePriority').value,
+                    conditions: conditions,
+                    actions: actions
+                });
+                UI.showAlert('Routing rule created successfully', 'success');
+                loadRoutingRules();
+            });
+        }
+
+        async function deleteRoutingRule(id) {
+            if (confirm('Are you sure you want to delete this routing rule?')) {
+                await API.call('deleteRoutingRule', { id });
+                UI.showAlert('Routing rule deleted', 'success');
+                loadRoutingRules();
+            }
+        }
+
+        // Zoho
+        async function loadZohoConfig() {
+            const data = await API.call('getZohoConfig');
+            const config = data.config || {};
+
+            document.getElementById('zohoClientId').value = config.clientId || '';
+            document.getElementById('zohoClientSecret').value = config.clientSecret || '';
+            document.getElementById('zohoRefreshToken').value = config.refreshToken || '';
+            document.getElementById('zohoTokenUrl').value = config.tokenUrl || '';
+            document.getElementById('zohoApiUrl').value = config.apiUrl || '';
+
+            await loadZohoSyncLogs();
+        }
+
+        async function saveZohoConfig() {
+            await API.call('updateZohoConfig', {
+                clientId: document.getElementById('zohoClientId').value,
+                clientSecret: document.getElementById('zohoClientSecret').value,
+                refreshToken: document.getElementById('zohoRefreshToken').value,
+                tokenUrl: document.getElementById('zohoTokenUrl').value,
+                apiUrl: document.getElementById('zohoApiUrl').value
+            });
+            UI.showAlert('Zoho configuration saved', 'success');
+        }
+
+        async function testZohoConnection() {
+            try {
+                await API.call('testZohoConnection');
+                UI.showAlert('Zoho connection successful', 'success');
+            } catch (error) {
+                UI.showAlert(`Zoho connection failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function refreshZohoToken() {
+            try {
+                await API.call('refreshZohoToken');
+                UI.showAlert('Zoho token refreshed successfully', 'success');
+            } catch (error) {
+                UI.showAlert(`Token refresh failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadZohoSyncLogs() {
+            const data = await API.call('getZohoSyncLogs');
+            const tbody = document.getElementById('zohoSyncLogsBody');
+            
+            if (data.logs && data.logs.length > 0) {
+                tbody.innerHTML = data.logs.map(log => `
+                    <tr>
+                        <td>${new Date(log.timestamp).toLocaleString()}</td>
+                        <td>${log.action}</td>
+                        <td>${log.entityId || '-'}</td>
+                        <td><span class="badge badge-${log.success ? 'success' : 'danger'}">${log.success ? 'Success' : 'Failed'}</span></td>
+                        <td>${log.message || '-'}</td>
+                    </tr>
+                `).join('');
+            } else {
+                UI.showEmpty(tbody, 'No sync logs available');
+            }
+        }
+
+        // AiSensy
+        async function loadAiSensyConfig() {
+            const data = await API.call('getAiSensyConfig');
+            const config = data.config || {};
+
+            document.getElementById('aisensyApiKey').value = config.apiKey || '';
+            document.getElementById('aisensyCampaignName').value = config.campaignName || '';
+            document.getElementById('aisensyDestination').value = config.destination || '';
+            document.getElementById('aisensyUserName').value = config.userName || '';
+
+            await loadAiSensyLogs();
+        }
+
+        async function saveAiSensyConfig() {
+            await API.call('updateAiSensyConfig', {
+                apiKey: document.getElementById('aisensyApiKey').value,
+                campaignName: document.getElementById('aisensyCampaignName').value,
+                destination: document.getElementById('aisensyDestination').value,
+                userName: document.getElementById('aisensyUserName').value
+            });
+            UI.showAlert('AiSensy configuration saved', 'success');
+        }
+
+        async function testAiSensyConnection() {
+            try {
+                await API.call('testAiSensyConnection');
+                UI.showAlert('AiSensy connection successful', 'success');
+            } catch (error) {
+                UI.showAlert(`AiSensy connection failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function sendAiSensyTest() {
+            const phone = document.getElementById('aisensyTestPhone').value;
+            if (!phone) {
+                UI.showAlert('Please enter a phone number', 'error');
+                return;
+            }
+            try {
+                await API.call('sendAiSensyTest', { phoneNumber: phone });
+                UI.showAlert('Test message sent successfully', 'success');
+            } catch (error) {
+                UI.showAlert(`Failed to send test: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadAiSensyLogs() {
+            const data = await API.call('getAiSensyLogs');
+            const tbody = document.getElementById('aisensyLogsBody');
+            
+            if (data.logs && data.logs.length > 0) {
+                tbody.innerHTML = data.logs.map(log => `
+                    <tr>
+                        <td>${new Date(log.timestamp).toLocaleString()}</td>
+                        <td>${log.action}</td>
+                        <td><span class="badge badge-${log.success ? 'success' : 'danger'}">${log.success ? 'Success' : 'Failed'}</span></td>
+                        <td>${log.message || '-'}</td>
+                    </tr>
+                `).join('');
+            } else {
+                UI.showEmpty(tbody, 'No logs available');
+            }
+        }
+
+        // Telegram
+        async function loadTelegramConfig() {
+            const data = await API.call('getTelegramConfig');
+            const config = data.config || {};
+
+            document.getElementById('telegramBotToken').value = config.botToken || '';
+            document.getElementById('telegramChatId').value = config.chatId || '';
+
+            await loadTelegramLogs();
+        }
+
+        async function saveTelegramConfig() {
+            await API.call('updateTelegramConfig', {
+                botToken: document.getElementById('telegramBotToken').value,
+                chatId: document.getElementById('telegramChatId').value
+            });
+            UI.showAlert('Telegram configuration saved', 'success');
+        }
+
+        async function testTelegramConnection() {
+            try {
+                await API.call('testTelegramConnection');
+                UI.showAlert('Telegram connection successful', 'success');
+            } catch (error) {
+                UI.showAlert(`Telegram connection failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function sendTelegramTest() {
+            try {
+                await API.call('sendTelegramTest');
+                UI.showAlert('Test message sent successfully', 'success');
+            } catch (error) {
+                UI.showAlert(`Failed to send test: ${error.message}`, 'error');
+            }
+        }
+
+        async function loadTelegramLogs() {
+            const data = await API.call('getTelegramLogs');
+            const tbody = document.getElementById('telegramLogsBody');
+            
+            if (data.logs && data.logs.length > 0) {
+                tbody.innerHTML = data.logs.map(log => `
+                    <tr>
+                        <td>${new Date(log.timestamp).toLocaleString()}</td>
+                        <td>${log.action}</td>
+                        <td><span class="badge badge-${log.success ? 'success' : 'danger'}">${log.success ? 'Success' : 'Failed'}</span></td>
+                        <td>${log.message || '-'}</td>
+                    </tr>
+                `).join('');
+            } else {
+                UI.showEmpty(tbody, 'No logs available');
+            }
+        }
+
+        // Users
+        async function loadUsers() {
+            const data = await API.call('getUsers');
+            State.users = data.users || [];
+
+            const tbody = document.getElementById('usersBody');
+            if (State.users.length > 0) {
+                tbody.innerHTML = State.users.map(user => `
+                    <tr>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td><span class="badge badge-info">${user.role}</span></td>
+                        <td>${user.phone || '-'}</td>
+                        <td><span class="badge badge-${user.active ? 'success' : 'gray'}">${user.active ? 'Active' : 'Inactive'}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-secondary" onclick="editUser('${user.id}')">Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteUser('${user.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                UI.showEmpty(tbody, 'No users found');
+            }
+
+            // Load roles
+            const roles = await API.call('getUserRoles');
+            const userRoles = document.getElementById('userRoles');
+            userRoles.innerHTML = roles.roles.map(role => `
+                <div style="padding: 0.75rem; background: #f8fafc; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+                    <strong>${role.name}</strong> (${role.id})
+                    <br><small>Permissions: ${role.permissions.join(', ')}</small>
+                </div>
+            `).join('');
+        }
+
+        async function createUser() {
+            const body = `
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" id="userName">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="userEmail">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Role</label>
+                    <select class="form-select" id="userRole">
+                        <option value="Sales Agent">Sales Agent</option>
+                        <option value="Manager">Manager</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="text" class="form-input" id="userPhone">
+                </div>
+            `;
+
+            UI.openModal('Create User', body, async () => {
+                await API.call('createUser', {
+                    name: document.getElementById('userName').value,
+                    email: document.getElementById('userEmail').value,
+                    role: document.getElementById('userRole').value,
+                    phone: document.getElementById('userPhone').value
+                });
+                UI.showAlert('User created successfully', 'success');
+                loadUsers();
+            });
+        }
+
+        async function deleteUser(id) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                await API.call('deleteUser', { id });
+                UI.showAlert('User deleted', 'success');
+                loadUsers();
+            }
+        }
+
+        // Settings
+        async function loadSettings() {
+            const data = await API.call('getSystemSettings');
+            const settings = data.settings || [];
+
+            // General settings
+            const generalSettings = settings.filter(s => s.category === 'general');
+            const generalForm = document.getElementById('generalSettingsForm');
+            generalForm.innerHTML = generalSettings.map(s => `
+                <div class="form-group">
+                    <label class="form-label">${s.key}</label>
+                    <input type="text" class="form-input" data-key="${s.key}" value="${s.value}" ${s.isSecret ? 'type="password"' : ''}>
+                </div>
+            `).join('');
+
+            // Server settings
+            const serverData = await API.call('getServerSettings');
+            document.getElementById('rateLimitEnabled').checked = serverData.settings.rate_limit_enabled || false;
+            document.getElementById('rateLimitMaxRequests').value = serverData.settings.rate_limit_max_requests || 100;
+            document.getElementById('rateLimitWindowMs').value = serverData.settings.rate_limit_window_ms || 60000;
+            document.getElementById('retryCount').value = serverData.settings.default_retry_count || 3;
+            document.getElementById('timeoutMs').value = serverData.settings.default_timeout_ms || 30000;
+
+            // Feature flags
+            const flags = await API.call('getFeatureFlags');
+            document.getElementById('zohoAutoSync').checked = flags.flags.zoho_auto_sync || false;
+            document.getElementById('aisensyAutoSend').checked = flags.flags.aisensy_auto_send || false;
+            document.getElementById('telegramAutoNotify').checked = flags.flags.telegram_auto_notify || false;
+            document.getElementById('gasAutoSync').checked = flags.flags.gas_auto_sync || false;
+            document.getElementById('sheetAutoSync').checked = flags.flags.sheet_auto_sync || false;
+
+            // Node backend
+            const nodeUrl = await API.call('getNodeApiUrl');
+            document.getElementById('nodeApiUrl').value = nodeUrl.nodeApiUrl || '';
+        }
+
+        async function saveGeneralSettings() {
+            const inputs = document.querySelectorAll('#generalSettingsForm input');
+            for (const input of inputs) {
+                await API.call('updateSystemSetting', {
+                    key: input.dataset.key,
+                    value: input.value
+                });
+            }
+            UI.showAlert('General settings saved', 'success');
+        }
+
+        async function saveServerSettings() {
+            await API.call('updateServerSettings', {
+                rateLimitEnabled: document.getElementById('rateLimitEnabled').checked,
+                rateLimitMaxRequests: parseInt(document.getElementById('rateLimitMaxRequests').value),
+                rateLimitWindowMs: parseInt(document.getElementById('rateLimitWindowMs').value),
+                retryCount: parseInt(document.getElementById('retryCount').value),
+                timeoutMs: parseInt(document.getElementById('timeoutMs').value)
+            });
+            UI.showAlert('Server settings saved', 'success');
+        }
+
+        async function saveFeatureFlags() {
+            await API.call('updateFeatureFlags', {
+                zohoAutoSync: document.getElementById('zohoAutoSync').checked,
+                aisensyAutoSend: document.getElementById('aisensyAutoSend').checked,
+                telegramAutoNotify: document.getElementById('telegramAutoNotify').checked,
+                gasAutoSync: document.getElementById('gasAutoSync').checked,
+                sheetAutoSync: document.getElementById('sheetAutoSync').checked
+            });
+            UI.showAlert('Feature flags saved', 'success');
+        }
+
+        async function setNodeApiUrl() {
+            await API.call('setNodeApiUrl', {
+                nodeApiUrl: document.getElementById('nodeApiUrl').value
+            });
+            UI.showAlert('Node API URL set', 'success');
+        }
+
+        async function testNodeBackend() {
+            try {
+                const result = await API.call('testNodeBackend');
+                document.getElementById('nodeBackendStatus').innerHTML = `
+                    <div class="alert alert-success">Node backend connection successful</div>
+                `;
+            } catch (error) {
+                document.getElementById('nodeBackendStatus').innerHTML = `
+                    <div class="alert alert-error">Node backend connection failed: ${error.message}</div>
+                `;
+            }
+        }
+
+        // Audit Logs
+        async function loadAuditLogs() {
+            const data = await API.call('getAuditLogs', { limit: 100 });
+            State.auditLogs = data.logs || [];
+
+            const tbody = document.getElementById('auditLogsBody');
+            if (State.auditLogs.length > 0) {
+                tbody.innerHTML = State.auditLogs.map(log => `
+                    <tr>
+                        <td>${new Date(log.timestamp).toLocaleString()}</td>
+                        <td><span class="badge badge-info">${log.action}</span></td>
+                        <td>${log.entityType || '-'}</td>
+                        <td>${log.entityId || '-'}</td>
+                        <td>${log.userId || '-'}</td>
+                        <td><small>${JSON.stringify(log.changes || {}).substring(0, 50)}...</small></td>
+                    </tr>
+                `).join('');
+            } else {
+                UI.showEmpty(tbody, 'No audit logs available');
+            }
+        }
+
+        // Sync Monitor
+        async function loadSyncMonitor() {
+            const status = await API.call('getSyncStatus');
+            const syncStatus = document.getElementById('syncStatus');
+            
+            syncStatus.innerHTML = Object.entries(status.syncSettings || {}).map(([key, value]) => `
+                <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: #f8fafc; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+                    <span>${key}</span>
+                    <span><span class="badge badge-${value ? 'success' : 'gray'}">${value ? 'Enabled' : 'Disabled'}</span></span>
+                </div>
+            `).join('');
+
+            const history = await API.call('getSyncHistory', { limit: 50 });
+            const tbody = document.getElementById('syncHistoryBody');
+            
+            if (history.logs && history.logs.length > 0) {
+                tbody.innerHTML = history.logs.map(log => `
+                    <tr>
+                        <td>${new Date(log.timestamp).toLocaleString()}</td>
+                        <td>${log.action}</td>
+                        <td><span class="badge badge-${log.success ? 'success' : 'danger'}">${log.success ? 'Success' : 'Failed'}</span></td>
+                        <td>${log.message || '-'}</td>
+                        <td>
+                            ${!log.success ? `<button class="btn btn-sm btn-secondary" onclick="retrySync('${log.id}')">Retry</button>` : '-'}
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                UI.showEmpty(tbody, 'No sync history available');
+            }
+        }
+
+        async function retrySync(syncId) {
+            try {
+                await API.call('retryFailedSync', { syncId });
+                UI.showAlert('Sync retry initiated', 'success');
+                loadSyncMonitor();
+            } catch (error) {
+                UI.showAlert(`Retry failed: ${error.message}`, 'error');
+            }
+        }
+
+        // System Health
+        async function loadSystemHealth() {
+            const health = await API.call('getSystemHealth');
+            const metrics = await API.call('getSystemMetrics');
+            const dbStats = await API.call('getDatabaseStats');
+
+            document.getElementById('healthNodeStatus').textContent = health.health.node;
+            document.getElementById('healthDbStatus').textContent = health.health.database;
+            document.getElementById('healthUptime').textContent = `${Math.floor(health.health.uptime / 3600)}h`;
+            document.getElementById('healthTimestamp').textContent = new Date(health.health.timestamp).toLocaleString();
+
+            const systemMetrics = document.getElementById('systemMetrics');
+            systemMetrics.innerHTML = `
+                <div style="padding: 0.75rem; background: #f8fafc; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+                    <strong>Uptime:</strong> ${metrics.metrics.uptime}s
+                </div>
+                <div style="padding: 0.75rem; background: #f8fafc; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+                    <strong>Active Integrations:</strong> ${metrics.metrics.integrations.length}
+                </div>
+            `;
+
+            const databaseStats = document.getElementById('databaseStats');
+            databaseStats.innerHTML = `
+                <div style="padding: 0.75rem; background: #f8fafc; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+                    <strong>Total Leads:</strong> ${dbStats.stats.totalLeads}
+                </div>
+                <div style="padding: 0.75rem; background: #f8fafc; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+                    <strong>Sheet Name:</strong> ${dbStats.stats.sheetName}
+                </div>
+                <div style="padding: 0.75rem; background: #f8fafc; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+                    <strong>Total Columns:</strong> ${dbStats.stats.totalColumns}
+                </div>
+            `;
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    switchScreen(item.dataset.screen);
+                });
+            });
+
+            // Modal close
+            document.getElementById('modalClose').addEventListener('click', UI.closeModal);
+            document.getElementById('modalCancelBtn').addEventListener('click', UI.closeModal);
+            document.getElementById('modalOverlay').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('modalOverlay')) {
+                    UI.closeModal();
+                }
+            });
+
+            // Refresh button
+            document.getElementById('refreshBtn').addEventListener('click', () => {
+                loadScreenData(State.currentScreen);
+            });
+
+            // Dashboard - auto load
+            loadDashboard();
+
+            // Leads
+            document.getElementById('createIntegrationBtn')?.addEventListener('click', createIntegration);
+            document.getElementById('createFieldMappingBtn')?.addEventListener('click', createFieldMapping);
+            document.getElementById('createRoutingRuleBtn')?.addEventListener('click', createRoutingRule);
+            document.getElementById('createUserBtn')?.addEventListener('click', createUser);
+
+            // Zoho
+            document.getElementById('saveZohoConfigBtn')?.addEventListener('click', saveZohoConfig);
+            document.getElementById('testZohoBtn')?.addEventListener('click', testZohoConnection);
+            document.getElementById('refreshZohoTokenBtn')?.addEventListener('click', refreshZohoToken);
+
+            // AiSensy
+            document.getElementById('saveAiSensyConfigBtn')?.addEventListener('click', saveAiSensyConfig);
+            document.getElementById('testAiSensyBtn')?.addEventListener('click', testAiSensyConnection);
+            document.getElementById('sendAiSensyTestBtn')?.addEventListener('click', sendAiSensyTest);
+            document.getElementById('enableAiSensyBtn')?.addEventListener('click', async () => {
+                await API.call('enableAiSensy');
+                UI.showAlert('AiSensy enabled', 'success');
+            });
+            document.getElementById('disableAiSensyBtn')?.addEventListener('click', async () => {
+                await API.call('disableAiSensy');
+                UI.showAlert('AiSensy disabled', 'success');
+            });
+
+            // Telegram
+            document.getElementById('saveTelegramConfigBtn')?.addEventListener('click', saveTelegramConfig);
+            document.getElementById('testTelegramBtn')?.addEventListener('click', testTelegramConnection);
+            document.getElementById('sendTelegramTestBtn')?.addEventListener('click', sendTelegramTest);
+            document.getElementById('getTelegramBotInfoBtn')?.addEventListener('click', async () => {
+                const info = await API.call('getTelegramBotInfo');
+                UI.showAlert(`Bot Info: ${JSON.stringify(info)}`, 'info');
+            });
+            document.getElementById('enableTelegramBtn')?.addEventListener('click', async () => {
+                await API.call('enableTelegram');
+                UI.showAlert('Telegram enabled', 'success');
+            });
+            document.getElementById('disableTelegramBtn')?.addEventListener('click', async () => {
+                await API.call('disableTelegram');
+                UI.showAlert('Telegram disabled', 'success');
+            });
+
+            // Settings
+            document.getElementById('saveGeneralSettingsBtn')?.addEventListener('click', saveGeneralSettings);
+            document.getElementById('saveServerSettingsBtn')?.addEventListener('click', saveServerSettings);
+            document.getElementById('saveFeatureFlagsBtn')?.addEventListener('click', saveFeatureFlags);
+            document.getElementById('setNodeApiUrlBtn')?.addEventListener('click', setNodeApiUrl);
+            document.getElementById('testNodeBackendBtn')?.addEventListener('click', testNodeBackend);
+
+            // Tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.style.display = 'none';
+                    });
+                    document.getElementById(`tab-${tab.dataset.tab}`).style.display = 'block';
+                });
+            });
+
+            // Lead filters
+            document.getElementById('leadSearch')?.addEventListener('input', debounce(() => {
+                loadLeads();
+            }, 300));
+            document.getElementById('leadSourceFilter')?.addEventListener('change', loadLeads);
+            document.getElementById('leadStatusFilter')?.addEventListener('change', loadLeads);
+            document.getElementById('leadAssignedFilter')?.addEventListener('change', loadLeads);
+        });
+
+        // Utility functions
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>

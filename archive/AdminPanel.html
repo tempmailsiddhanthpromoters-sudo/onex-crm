@@ -1,0 +1,3138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OneX CRM</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root{
+        --bg:#f7f9fb; --surface:#ffffff; --surface2:#f2f4f6; --surface3:#eceef0;
+        --border:#e0e3e5; --text:#191c1e; --muted:#6b7280; --muted2:#9ca3af;
+        --primary:#0051d5; --primary-soft:#e8f0fe; --primary-dark:#131b2e;
+        --green:#16a34a; --green-bg:#dcfce7; --red:#dc2626; --red-bg:#fee2e2;
+        --amber:#d97706; --amber-bg:#fef3c7; --purple:#7c3aed; --purple-bg:#ede9fe;
+        --radius:12px; --shadow:0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+        --shadow-md:0 4px 12px rgba(0,0,0,.08);
+      }
+      *{box-sizing:border-box;margin:0;padding:0}
+      html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+      .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400;font-size:20px;vertical-align:middle;line-height:1}
+      .app{display:flex;height:100vh;overflow:hidden}
+      /* SIDEBAR */
+      .sidebar{width:248px;min-width:248px;background:var(--primary-dark);color:#fff;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+      .sb-logo{padding:20px 18px 14px}
+      .sb-logo-row{display:flex;align-items:center;gap:9px}
+      .sb-logo-emoji{font-size:22px}
+      .sb-logo-name{font-size:18px;font-weight:800;letter-spacing:-.3px}
+      .sb-logo-sub{font-size:10px;color:rgba(255,255,255,.45);margin-top:3px;letter-spacing:1px;text-transform:uppercase;font-weight:600}
+      .sb-nav{flex:1;padding:6px 8px}
+      .sb-section-label{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1.5px;padding:14px 12px 4px;font-weight:700}
+      .sb-item{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:9px;cursor:pointer;color:rgba(255,255,255,.65);font-size:13.5px;font-weight:500;margin-bottom:1px;transition:all .15s;user-select:none}
+      .sb-item:hover{background:rgba(255,255,255,.06);color:#fff}
+      .sb-item.active{background:var(--primary);color:#fff;font-weight:600}
+      .sb-item .ms{font-size:18px;width:20px;text-align:center;flex-shrink:0}
+      .sb-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;padding:1px 6px;border-radius:8px;font-weight:700}
+      .sb-footer{padding:14px 18px;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:8px}
+      .sb-user-av{width:34px;height:34px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+      .sb-user-name{font-size:12.5px;font-weight:700}
+      .sb-user-role{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px}
+      /* MAIN */
+      .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+      .topbar{height:60px;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:12px;flex-shrink:0}
+      .topbar-title{font-size:18px;font-weight:800;flex:1;letter-spacing:-.3px}
+      .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:9px;border:1px solid var(--border);cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;transition:all .15s;white-space:nowrap;background:#fff;color:var(--text)}
+      .btn:hover{background:var(--surface2)}
+      .btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}.btn-primary:hover{background:#003ea8}
+      .btn-danger{background:var(--red-bg);color:var(--red);border-color:#fecaca}
+      .btn-success{background:var(--green-bg);color:var(--green);border-color:#bbf7d0}
+      .btn-amber{background:var(--amber-bg);color:var(--amber);border-color:#fde68a}
+      .btn-sm{padding:5px 11px;font-size:12px;gap:4px}
+      .btn:disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
+      .content{flex:1;overflow-y:auto;padding:22px}
+      /* CARDS */
+      .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow)}
+      .card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}
+      .card-title{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;letter-spacing:-.2px}
+      .card-title .ms{color:var(--primary)}
+      .card-sub{font-size:12px;color:var(--muted);margin-top:2px}
+      /* STATS */
+      .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:13px;margin-bottom:20px}
+      .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px 17px;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s}
+      .kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+      .kpi-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+      .kpi-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+      .kpi-icon.blue{background:var(--primary-soft);color:var(--primary)}
+      .kpi-icon.green{background:var(--green-bg);color:var(--green)}
+      .kpi-icon.red{background:var(--red-bg);color:var(--red)}
+      .kpi-icon.amber{background:var(--amber-bg);color:var(--amber)}
+      .kpi-icon.purple{background:var(--purple-bg);color:var(--purple)}
+      .kpi-chip{font-size:10px;font-weight:700;background:var(--surface2);color:var(--muted);padding:3px 8px;border-radius:20px}
+      .kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;font-weight:700;margin-bottom:3px}
+      .kpi-val{font-size:26px;font-weight:800;letter-spacing:-.5px}
+      /* GRIDS */
+      .g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+      .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+      .g12{display:grid;grid-template-columns:1fr 1.6fr;gap:16px;margin-bottom:16px}
+      /* TABLE */
+      .tw{overflow-x:auto}
+      table{width:100%;border-collapse:collapse;font-size:13px}
+      thead th{background:var(--surface2);color:var(--muted);font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+      tbody tr{border-bottom:1px solid var(--border);transition:background .1s;cursor:pointer}
+      tbody tr:hover{background:var(--surface2)}
+      tbody td{padding:10px 12px;color:var(--text);vertical-align:middle}
+      .mono{font-family:ui-monospace,monospace;font-size:11px;color:var(--muted)}
+      /* BADGES */
+      .badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+      .bh{background:var(--primary-soft);color:var(--primary)}.b9{background:var(--amber-bg);color:var(--amber)}
+      .bu{background:var(--surface3);color:var(--muted)}.bdyn{background:var(--purple-bg);color:var(--purple)}
+      .bnew{background:var(--primary-soft);color:var(--primary)}.bcont{background:var(--amber-bg);color:var(--amber)}
+      .bfol{background:var(--green-bg);color:var(--green)}.bsit{background:var(--purple-bg);color:var(--purple)}
+      .bneg{background:#fce7f3;color:#be185d}.bbok{background:var(--green-bg);color:var(--green)}
+      .blost{background:var(--red-bg);color:var(--red)}.bsent{background:var(--green-bg);color:var(--green)}
+      .bfail{background:var(--red-bg);color:var(--red)}.bpend{background:var(--amber-bg);color:var(--amber)}
+      .boff{background:var(--surface3);color:var(--muted)}
+      /* FILTERS */
+      .fbar{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+      .sw{flex:1;min-width:180px;position:relative}
+      .sw input{width:100%;padding:9px 12px 9px 34px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px}
+      .sw .ms{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:17px;color:var(--muted2);pointer-events:none}
+      .sw input:focus{outline:none;border-color:var(--primary);background:#fff}
+      select,input[type=text],input[type=email],input[type=password],input[type=tel],input[type=url],input[type=number],textarea{background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;padding:8px 11px;transition:border-color .2s;width:100%}
+      select:focus,input:focus,textarea:focus{outline:none;border-color:var(--primary);background:#fff}
+      textarea{resize:vertical;min-height:68px}
+      .fg{margin-bottom:13px}.fl{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+      .fhint{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.5}
+      .fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+      .fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+      /* TOGGLE */
+      .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}
+      .toggle-row:last-child{border-bottom:none}
+      .tr-info .trn{font-weight:700;font-size:13.5px}.tr-info .trd{font-size:11.5px;color:var(--muted);margin-top:1px}
+      .tgl{width:40px;height:22px;background:#d1d5db;border-radius:11px;position:relative;cursor:pointer;transition:background .25s;flex-shrink:0}
+      .tgl.on{background:var(--primary)}.tgl::after{content:'';position:absolute;top:2.5px;left:2.5px;width:17px;height:17px;background:#fff;border-radius:50%;transition:transform .25s;box-shadow:0 1px 3px rgba(0,0,0,.25)}.tgl.on::after{transform:translateX(18px)}
+      /* CHARTS */
+      .mini-chart{height:110px;display:flex;align-items:flex-end;gap:4px;padding-top:8px}
+      .bg{flex:1;display:flex;align-items:flex-end;gap:2px;min-width:0}
+      .bar{flex:1;border-radius:4px 4px 0 0;transition:height .4s cubic-bezier(.34,1.56,.64,1);min-height:2px}
+      .chart-labels{display:flex;gap:4px;margin-top:5px}
+      .chart-label{flex:1;text-align:center;font-size:9px;color:var(--muted)}
+      /* PAGINATION */
+      .pg{display:flex;gap:4px;align-items:center;margin-top:14px;justify-content:center}
+      .pb{padding:5px 11px;border-radius:7px;border:1px solid var(--border);background:#fff;color:var(--text);cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+      .pb:hover,.pb.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+      .pinfo{color:var(--muted);font-size:12px;margin-left:6px}
+      /* MODAL */
+      .mo{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:1000;align-items:center;justify-content:center;padding:14px}
+      .mo.open{display:flex}
+      .md{background:var(--surface);border-radius:16px;padding:0;max-width:560px;width:100%;max-height:92vh;overflow:hidden;animation:su .22s ease;box-shadow:0 20px 60px rgba(0,0,0,.25);display:flex;flex-direction:column}
+      .md.wide{max-width:760px}
+      @keyframes su{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+      .md-hd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+      .md-title{font-size:17px;font-weight:800}
+      .md-sub{font-size:12px;color:var(--muted);margin-top:2px}
+      .mclose{cursor:pointer;color:var(--muted);font-size:22px;padding:4px;border-radius:8px;display:flex}
+      .mclose:hover{background:var(--surface2);color:var(--text)}
+      .md-body{padding:20px 22px;overflow-y:auto;flex:1}
+      .mfoot{display:flex;gap:8px;justify-content:flex-end;padding:14px 22px;border-top:1px solid var(--border);flex-shrink:0}
+      /* TABS */
+      .tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:16px}
+      .tab{padding:9px 4px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-right:18px}
+      .tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+      .tabpanel{display:none}.tabpanel.active{display:block}
+      /* RULE/TEAM ROW */
+      .rule-row{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:7px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr auto auto;gap:7px;align-items:center}
+      .rule-row input,.rule-row select{font-size:12px;padding:5px 8px}
+      .team-row{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px;margin-bottom:7px;display:grid;grid-template-columns:2fr 2fr 1fr 1fr auto;gap:8px;align-items:center}
+      .team-row input,.team-row select{font-size:12px;padding:5px 8px}
+      /* TOAST */
+      .toast-container{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:7px}
+      .toast{background:#fff;border:1px solid var(--border);border-radius:10px;padding:11px 16px;font-size:13px;display:flex;align-items:center;gap:9px;animation:fi .22s ease;box-shadow:var(--shadow-md);min-width:240px;max-width:360px;border-left:4px solid var(--primary);font-weight:600}
+      .toast.error{border-left-color:var(--red)}.toast.success{border-left-color:var(--green)}.toast.warning{border-left-color:var(--amber)}
+      @keyframes fi{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+      .spin{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:sp 1s linear infinite;margin:50px auto}
+      @keyframes sp{to{transform:rotate(360deg)}}
+      .spin-icon{animation:sp 1s linear infinite;display:inline-block}
+      .es{text-align:center;padding:46px 16px;color:var(--muted)}.es .ms{font-size:46px;margin-bottom:10px;display:block;opacity:.35}.es p{font-size:14px}
+      .div{height:1px;background:var(--border);margin:14px 0}
+      .tm{color:var(--muted)}.tg{color:var(--green)}.tr{color:var(--red)}.ta{color:var(--primary)}
+      .mb12{margin-bottom:12px}
+      .codeblock{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;font-family:ui-monospace,monospace;font-size:11px;word-break:break-all;color:var(--primary);line-height:1.8}
+      /* KANBAN */
+      .kanban-wrap{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;align-items:flex-start}
+      .kanban-col{min-width:260px;max-width:260px;background:var(--surface2);border-radius:14px;border:1px solid var(--border);display:flex;flex-direction:column;max-height:calc(100vh - 190px)}
+      .kanban-col-hd{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;border-radius:14px 14px 0 0;background:#fff}
+      .kanban-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+      .kanban-col-title{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;flex:1}
+      .kanban-count{background:var(--surface3);color:var(--muted);font-size:10px;font-weight:800;padding:2px 7px;border-radius:8px}
+      .kanban-body{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:60px}
+      .kanban-body.dragover{background:var(--primary-soft)}
+      .kanban-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:11px 12px;cursor:grab;box-shadow:var(--shadow);transition:box-shadow .15s,transform .15s}
+      .kanban-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+      .kanban-card.dragging{opacity:.4}
+      .kc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:6px}
+      .kc-name{font-weight:800;font-size:13px}
+      .kc-prop{font-size:12px;color:var(--muted);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .kc-foot{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted)}
+      /* PROFILE MODAL */
+      .profile-hd{display:flex;align-items:center;gap:14px}
+      .profile-av{width:48px;height:48px;border-radius:50%;background:var(--primary-soft);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex-shrink:0}
+      .profile-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+      .profile-section{margin-bottom:18px}
+      .profile-section-title{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+      .profile-section-title .ms{font-size:15px;color:var(--primary)}
+      .timeline-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+      /* INTEGRATIONS */
+      .int-card{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:10px;background:#fff;transition:box-shadow .15s}
+      .int-card:hover{box-shadow:var(--shadow-md)}
+      .int-hd{display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer;transition:background .15s;user-select:none}
+      .int-hd:hover{background:var(--surface2)}
+      .int-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+      .int-name{font-weight:800;font-size:14px}
+      .int-desc{font-size:11.5px;color:var(--muted)}
+      .int-expand-hint{font-size:10px;color:var(--primary);font-weight:600;margin-top:2px;display:flex;align-items:center;gap:3px}
+      .int-status{margin-left:auto;display:flex;align-items:center;gap:8px}
+      .int-body{padding:0 16px 16px;display:none;border-top:1px solid var(--border)}
+      .int-body.open{display:block;padding-top:14px}
+      .int-chevron{transition:transform .2s;color:var(--muted)}
+      .int-chevron.open{transform:rotate(180deg)}
+      .int-result{padding:10px 12px;border-radius:9px;font-size:12.5px;margin-top:10px;display:none;font-weight:600}
+      .setup-banner{background:linear-gradient(135deg,#e8f0fe 0%,#f0fdf4 100%);border:1.5px solid var(--primary);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px}
+      .setup-banner .sb-icon{font-size:28px;flex-shrink:0;margin-top:2px}
+      .setup-banner .sb-title{font-weight:800;font-size:14px;color:var(--primary);margin-bottom:4px}
+      .setup-banner .sb-steps{font-size:12.5px;color:var(--text);line-height:2}
+      .setup-banner .sb-steps span{background:#fff;border:1px solid var(--border);border-radius:6px;padding:1px 8px;font-weight:700;margin-right:4px;font-size:11px}
+      /* MOBILE */
+      @media(max-width:768px){.sidebar{position:fixed;left:-248px;height:100%;z-index:100;transition:left .3s}.sidebar.open{left:0}.g2,.g3,.g12,.fr,.fr3,.timeline-row,.profile-fields{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr 1fr}.rule-row,.team-row{grid-template-columns:1fr 1fr}.mmenu{display:flex!important}}
+      .mmenu{display:none;align-items:center;cursor:pointer;font-size:22px;margin-right:5px}
+      ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+    </style>
+  </head>
+  <body>
+    <div class="toast-container" id="tc"></div>
+
+    <!-- LEAD PROFILE MODAL -->
+    <div class="mo" id="mProfile">
+      <div class="md wide">
+        <div class="md-hd">
+          <div>
+            <div class="md-title" id="profName">Lead Profile</div>
+            <div class="md-sub" id="profSub">—</div>
+          </div>
+          <span class="mclose" onclick="cm('mProfile')"
+            ><span class="material-symbols-outlined">close</span></span
+          >
+        </div>
+        <div class="md-body" id="profBody"></div>
+        <div class="mfoot">
+          <button class="btn" onclick="cm('mProfile')">Cancel</button>
+          <button
+            class="btn btn-primary"
+            id="btnSaveProfile"
+            onclick="saveProfile()"
+          >
+            <span class="material-symbols-outlined" style="font-size: 16px"
+              >save</span
+            >Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEST WA MODAL -->
+    <div class="mo" id="mTestWa">
+      <div class="md" style="max-width: 400px">
+        <div class="md-hd">
+          <div class="md-title"><span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;margin-right:6px">chat</span> Test WhatsApp</div>
+          <span class="mclose" onclick="cm('mTestWa')"
+            ><span class="material-symbols-outlined">close</span></span
+          >
+        </div>
+        <div class="md-body">
+          <div class="fg">
+            <label class="fl">Recipient Name</label
+            ><input type="text" id="twN" placeholder="Enter name" />
+          </div>
+          <div class="fg">
+            <label class="fl">Phone (91XXXXXXXXXX)</label
+            ><input type="tel" id="twP" placeholder="91XXXXXXXXXX" />
+          </div>
+          <div
+            id="twRes"
+            style="
+              display: none;
+              padding: 10px;
+              border-radius: 9px;
+              font-size: 13px;
+              margin-bottom: 0;
+              font-weight: 600;
+            "
+          ></div>
+        </div>
+        <div class="mfoot">
+          <button class="btn" onclick="cm('mTestWa')">Cancel</button
+          ><button class="btn btn-primary" id="btnTw" onclick="execTestWa()">
+            <span class="material-symbols-outlined" style="font-size: 16px"
+              >send</span
+            >Send Test
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="app">
+      <aside class="sidebar" id="sb">
+        <div class="sb-logo">
+          <div class="sb-logo-row">
+            <span class="sb-logo-emoji" id="lgEmoji">🏢</span
+            ><span class="sb-logo-name" id="lgName">OneX CRM</span>
+          </div>
+          <div class="sb-logo-sub" id="lgSub">Real Estate Sales Platform</div>
+        </div>
+        <nav class="sb-nav">
+          <div class="sb-section-label">Overview</div>
+          <div class="sb-item active" onclick="nav('dashboard')">
+            <span class="material-symbols-outlined ms">dashboard</span>Dashboard
+          </div>
+          <div class="sb-item" onclick="nav('leads')">
+            <span class="material-symbols-outlined ms">person_search</span
+            >Leads<span class="sb-badge" id="nBadge" style="display: none"
+              >0</span
+            >
+          </div>
+          <div class="sb-item" onclick="nav('pipeline')">
+            <span class="material-symbols-outlined ms">account_tree</span
+            >Pipeline
+          </div>
+          <div class="sb-item" onclick="nav('duplicates')">
+            <span class="material-symbols-outlined ms">content_copy</span
+            >Duplicates
+          </div>
+
+          <div class="sb-section-label">Automation</div>
+          <div class="sb-item" onclick="nav('automation')">
+            <span class="material-symbols-outlined ms">tune</span>Automation
+          </div>
+          <div class="sb-item" onclick="nav('routing')">
+            <span class="material-symbols-outlined ms">alt_route</span>Lead
+            Routing
+          </div>
+          <div class="sb-item" onclick="nav('campaigns')">
+            <span class="material-symbols-outlined ms">campaign</span>Campaigns
+          </div>
+          <div class="sb-item" onclick="nav('sources')">
+            <span class="material-symbols-outlined ms">hub</span>Lead Sources
+          </div>
+          <div class="sb-item" onclick="nav('properties')">
+            <span class="material-symbols-outlined ms">apartment</span
+            >Properties
+          </div>
+
+          <div class="sb-section-label">Configuration</div>
+          <div class="sb-item" onclick="nav('team')">
+            <span class="material-symbols-outlined ms">group</span>Team Members
+          </div>
+          <div class="sb-item" onclick="nav('branding')">
+            <span class="material-symbols-outlined ms">palette</span>Branding
+          </div>
+
+          <div class="sb-section-label">System</div>
+          <div class="sb-item" onclick="nav('errors')">
+            <span class="material-symbols-outlined ms">error</span>Error
+            Center<span class="sb-badge" id="eBadge" style="display: none"
+              >0</span
+            >
+          </div>
+          <div class="sb-item" onclick="nav('logs')">
+            <span class="material-symbols-outlined ms">history</span>Audit Logs
+          </div>
+          <div class="sb-item" onclick="nav('settings')">
+            <span class="material-symbols-outlined ms">settings</span>Settings
+          </div>
+        </nav>
+        <div class="sb-footer">
+          <div class="sb-user-av">OX</div>
+          <div>
+            <div class="sb-user-name">Admin</div>
+            <div class="sb-user-role">OneX CRM v3.0</div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="main">
+        <div class="topbar">
+          <span
+            class="mmenu"
+            onclick="document.getElementById('sb').classList.toggle('open')"
+            ><span class="material-symbols-outlined">menu</span></span
+          >
+          <div class="topbar-title" id="ttl">Dashboard</div>
+          <button class="btn btn-sm" onclick="renderPage(curPage)">
+            <span class="material-symbols-outlined" style="font-size: 16px"
+              >refresh</span
+            >
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="nav('settings')">
+            <span class="material-symbols-outlined" style="font-size: 16px"
+              >settings</span
+            >Settings
+          </button>
+        </div>
+        <div class="content" id="mc"></div>
+      </div>
+    </div>
+
+    <script>
+      "use strict";
+      var curPage = "dashboard",
+        leadFilters = {
+          search: "",
+          source: "",
+          status: "",
+          page: 1,
+          limit: 50,
+        };
+      var routingRules = [],
+        sources = [],
+        teams = [],
+        properties = [],
+        editingLead = null,
+        draggedLeadId = null;
+      var PAGE_TITLES = {
+        dashboard: "Dashboard",
+        leads: "Lead Management",
+        pipeline: "Sales Pipeline",
+        duplicates: "Duplicate Leads",
+        automation: "Automation",
+        routing: "Lead Routing",
+        campaigns: "Campaigns",
+        sources: "Lead Sources",
+        properties: "Property Inventory",
+        team: "Team Members",
+        branding: "Branding",
+        errors: "Error Center",
+        logs: "Audit Logs",
+        settings: "Settings",
+      };
+      var STATUS_META = {
+        New: { color: "#0051d5", badge: "bnew" },
+        Contacted: { color: "#d97706", badge: "bcont" },
+        Interested: { color: "#7c3aed", badge: "bdyn" },
+        "Meeting Scheduled": { color: "#0891b2", badge: "bsit" },
+        "Site Visit Scheduled": { color: "#0891b2", badge: "bsit" },
+        "Site Visit Done": { color: "#16a34a", badge: "bfol" },
+        Negotiation: { color: "#be185d", badge: "bneg" },
+        Booked: { color: "#16a34a", badge: "bbok" },
+        Lost: { color: "#dc2626", badge: "blost" },
+      };
+
+      // ── API BRIDGE ────────────────────────────────────────────────────────────────
+      function callApi(action, extra) {
+        return new Promise(function (res, rej) {
+          var p = Object.assign({ _adminAction: action }, extra || {});
+          google.script.run
+            .withSuccessHandler(function (r) {
+              if (r && r.success) res(r.data !== undefined ? r.data : r);
+              else rej(new Error((r && r.message) || "API error"));
+            })
+            .withFailureHandler(function (e) {
+              rej(new Error(e && e.message ? e.message : String(e)));
+            })
+            .serverCallAdmin(p);
+        });
+      }
+      function callFn(fn) {
+        return new Promise(function (res, rej) {
+          google.script.run
+            .withSuccessHandler(res)
+            .withFailureHandler(function (e) {
+              rej(new Error(e && e.message ? e.message : String(e)));
+            })
+            [fn]();
+        });
+      }
+
+      // ── NAV ───────────────────────────────────────────────────────────────────────
+      function nav(page) {
+        curPage = page;
+        document.getElementById("ttl").textContent = PAGE_TITLES[page] || page;
+        document.querySelectorAll(".sb-item").forEach(function (e) {
+          e.classList.remove("active");
+        });
+        var items = document.querySelectorAll(".sb-item");
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].getAttribute("onclick") === "nav('" + page + "')") {
+            items[i].classList.add("active");
+            break;
+          }
+        }
+        document.getElementById("sb").classList.remove("open");
+        renderPage(page);
+      }
+      async function renderPage(page) {
+        var el = document.getElementById("mc");
+        el.innerHTML = '<div class="spin"></div>';
+        try {
+          switch (page) {
+            case "dashboard":
+              await pgDashboard(el);
+              break;
+            case "leads":
+              await pgLeads(el);
+              break;
+            case "pipeline":
+              await pgPipeline(el);
+              break;
+            case "duplicates":
+              await pgDuplicates(el);
+              break;
+            case "automation":
+              await pgAutomation(el);
+              break;
+            case "routing":
+              await pgRouting(el);
+              break;
+            case "campaigns":
+              await pgCampaigns(el);
+              break;
+            case "sources":
+              await pgSources(el);
+              break;
+            case "properties":
+              await pgProperties(el);
+              break;
+            case "team":
+              await pgTeam(el);
+              break;
+            case "branding":
+              await pgBranding(el);
+              break;
+            case "errors":
+              await pgErrors(el);
+              break;
+            case "logs":
+              await pgLogs(el);
+              break;
+            case "settings":
+              await pgSettings(el);
+              break;
+            default:
+              el.innerHTML =
+                '<div class="es"><span class="material-symbols-outlined ms">construction</span><p>Page not found</p></div>';
+          }
+        } catch (err) {
+          el.innerHTML =
+            '<div class="es"><span class="material-symbols-outlined ms">error</span><p>' +
+            eh(err.message) +
+            '</p><br><button class="btn btn-sm" onclick="renderPage(curPage)">Retry</button></div>';
+        }
+      }
+
+      // ── DASHBOARD ─────────────────────────────────────────────────────────────────
+      async function pgDashboard(el) {
+        var d = await callApi("getDashboardData");
+        var s = d.summary;
+        if (s.todayCount > 0) {
+          var b = document.getElementById("nBadge");
+          b.textContent = s.todayCount;
+          b.style.display = "";
+        }
+
+        var allSrcs = [];
+        var srcColorMap = {
+          "Housing.com": "#0051d5",
+          "99acres": "#d97706",
+          MagicBricks: "#16a34a",
+          "Meta Lead Ads": "#7c3aed",
+          "Google Ads": "#0891b2",
+        };
+        d.trend.forEach(function (t) {
+          Object.keys(t).forEach(function (k) {
+            if (k !== "date" && allSrcs.indexOf(k) === -1) allSrcs.push(k);
+          });
+        });
+        var maxT = 1;
+        d.trend.forEach(function (t) {
+          var sum = 0;
+          allSrcs.forEach(function (s) {
+            sum += t[s] || 0;
+          });
+          maxT = Math.max(maxT, sum);
+        });
+        var barsHtml = "",
+          lblHtml = "",
+          legendHtml = "";
+        allSrcs.forEach(function (src, i) {
+          var c =
+            srcColorMap[src] ||
+            ["#0051d5", "#d97706", "#16a34a", "#7c3aed", "#0891b2"][i % 5];
+          legendHtml +=
+            '<span style="display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--muted)"><span style="width:9px;height:9px;border-radius:2px;background:' +
+            c +
+            ';display:inline-block"></span>' +
+            eh(src) +
+            "</span>";
+        });
+        d.trend.forEach(function (t) {
+          var bars = "";
+          allSrcs.forEach(function (src, si) {
+            var c =
+              srcColorMap[src] ||
+              ["#0051d5", "#d97706", "#16a34a", "#7c3aed", "#0891b2"][si % 5];
+            bars +=
+              '<div class="bar" style="height:' +
+              Math.round(((t[src] || 0) / maxT) * 92) +
+              "px;background:" +
+              c +
+              '" title="' +
+              eh(src) +
+              ": " +
+              (t[src] || 0) +
+              '"></div>';
+          });
+          barsHtml += '<div class="bg">' + bars + "</div>";
+          lblHtml += '<div class="chart-label">' + t.date.slice(5) + "</div>";
+        });
+
+        var stColors = {
+          New: "#0051d5",
+          Contacted: "#d97706",
+          Interested: "#7c3aed",
+          "Meeting Scheduled": "#0891b2",
+          "Site Visit Scheduled": "#0891b2",
+          "Site Visit Done": "#16a34a",
+          Negotiation: "#be185d",
+          Booked: "#16a34a",
+          Lost: "#dc2626",
+        };
+        var ents = Object.entries(d.statusCounts || {});
+        var totSt = ents.reduce(function (a, b) {
+          return a + b[1];
+        }, 0);
+        var off = 0,
+          paths = "",
+          legHtml = "";
+        var r = 40,
+          cx = 50,
+          cy = 50,
+          circ = 2 * Math.PI * r;
+        ents.forEach(function (e) {
+          var k = e[0],
+            v = e[1],
+            pct = totSt > 0 ? v / totSt : 0,
+            len = pct * circ,
+            col = stColors[k] || "#888";
+          paths +=
+            '<circle cx="' +
+            cx +
+            '" cy="' +
+            cy +
+            '" r="' +
+            r +
+            '" fill="none" stroke="' +
+            col +
+            '" stroke-width="17" stroke-dasharray="' +
+            len +
+            " " +
+            (circ - len) +
+            '" stroke-dashoffset="' +
+            -off +
+            '" transform="rotate(-90 ' +
+            cx +
+            " " +
+            cy +
+            ')"/>';
+          off += len;
+          legHtml +=
+            '<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px;font-size:12px"><div style="width:9px;height:9px;border-radius:50%;background:' +
+            col +
+            ';flex-shrink:0"></div><div style="flex:1;color:var(--muted);font-weight:500">' +
+            eh(k) +
+            '</div><div style="font-weight:800">' +
+            v +
+            "</div></div>";
+        });
+        if (!ents.length)
+          paths =
+            '<circle cx="50" cy="50" r="40" fill="none" stroke="var(--border)" stroke-width="17"/>';
+
+        var recHtml =
+          !d.recentLeads || !d.recentLeads.length
+            ? '<tr><td colspan="7" class="es" style="padding:24px">No leads yet</td></tr>'
+            : d.recentLeads
+                .map(function (l) {
+                  return (
+                    "<tr onclick=\"openLeadProfile('" +
+                    ej(l.leadId) +
+                    '\')"><td class="mono">' +
+                    eh(l.leadId) +
+                    "</td><td><strong>" +
+                    eh(l.name) +
+                    "</strong></td><td>" +
+                    fmtPh(l.phone) +
+                    "</td><td>" +
+                    srcBadge(l.source) +
+                    '</td><td style="max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px">' +
+                    eh(l.property || "—") +
+                    "</td><td>" +
+                    stBadge(l.status) +
+                    "</td><td>" +
+                    waBadge(l.waStatus) +
+                    "</td></tr>"
+                  );
+                })
+                .join("");
+
+        el.innerHTML =
+          '<div class="stats-grid">' +
+          kpi(
+            "blue",
+            "group_add",
+            "Total Leads",
+            s.total.toLocaleString(),
+            "All time",
+          ) +
+          kpi("amber", "bolt", "Today", s.todayCount, "New leads") +
+          kpi(
+            "green",
+            "done_all",
+            "WA Sent",
+            s.wasSent,
+            (s.total > 0 ? Math.round((s.wasSent / s.total) * 100) : 0) +
+              "% delivery",
+          ) +
+          kpi("red", "error", "WA Failed", s.wasFailed, "Needs retry") +
+          kpi("purple", "content_copy", "Duplicates", s.dupCount, "Blocked") +
+          kpi(
+            "green",
+            "workspace_premium",
+            "Conversion",
+            s.conversionRate + "%",
+            "Booked/Total",
+          ) +
+          "</div>" +
+          '<div class="g2">' +
+          '<div class="card"><div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">trending_up</span>Lead Inflow Trend</div></div>' +
+          '<div style="display:flex;gap:14px;margin-bottom:4px;flex-wrap:wrap">' +
+          legendHtml +
+          "</div>" +
+          '<div class="mini-chart">' +
+          barsHtml +
+          "</div>" +
+          '<div class="chart-labels">' +
+          lblHtml +
+          "</div></div>" +
+          '<div class="card"><div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">donut_large</span>Pipeline Overview</div><button class="btn btn-sm" onclick="nav(\'pipeline\')">View Board →</button></div>' +
+          '<div style="display:flex;align-items:center;gap:16px">' +
+          '<svg width="100" height="100" viewBox="0 0 100 100">' +
+          paths +
+          '<text x="50" y="50" text-anchor="middle" dominant-baseline="middle" fill="var(--text)" font-size="14" font-weight="800">' +
+          totSt +
+          "</text>" +
+          '<text x="50" y="63" text-anchor="middle" fill="var(--muted)" font-size="7" font-weight="700">LEADS</text></svg>' +
+          '<div style="flex:1">' +
+          (legHtml ||
+            '<div class="tm" style="font-size:12px">No leads yet</div>') +
+          "</div>" +
+          "</div></div>" +
+          "</div>" +
+          '<div class="card"><div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">format_list_bulleted</span>Recent Leads</div><button class="btn btn-sm" onclick="nav(\'leads\')">View All →</button></div>' +
+          '<div class="tw"><table><thead><tr><th>Lead ID</th><th>Name</th><th>Phone</th><th>Source</th><th>Property</th><th>Status</th><th>WA</th></tr></thead><tbody>' +
+          recHtml +
+          "</tbody></table></div></div>";
+      }
+      function kpi(cls, icon, label, val, sub) {
+        return (
+          '<div class="kpi"><div class="kpi-top"><div class="kpi-icon ' +
+          cls +
+          '"><span class="material-symbols-outlined">' +
+          icon +
+          '</span></div><span class="kpi-chip">' +
+          sub +
+          '</span></div><div class="kpi-label">' +
+          label +
+          '</div><div class="kpi-val">' +
+          val +
+          "</div></div>"
+        );
+      }
+
+      // ── LEADS LIST ────────────────────────────────────────────────────────────────
+      async function pgLeads(el) {
+        var srcData = await callApi("getSources");
+        var srcOpts =
+          '<option value="">All Sources</option>' +
+          (srcData.sources || [])
+            .map(function (s) {
+              return (
+                '<option value="' +
+                eh(s.name) +
+                '"' +
+                (leadFilters.source === s.name ? " selected" : "") +
+                ">" +
+                eh(s.name) +
+                "</option>"
+              );
+            })
+            .join("");
+        el.innerHTML =
+          '<div class="card">' +
+          '<div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">person_search</span>Lead Management</div>' +
+          '<button class="btn btn-success btn-sm" onclick="exportCSV()"><span class="material-symbols-outlined" style="font-size:15px">download</span>Export</button></div>' +
+          '<div class="fbar">' +
+          '<div class="sw"><span class="material-symbols-outlined ms">search</span><input type="text" id="lsrch" placeholder="Search name, phone, ID, property…" oninput="onSrch(this.value)" value="' +
+          eh(leadFilters.search) +
+          '"></div>' +
+          '<select id="lsrcF" onchange="applyF()" style="width:150px">' +
+          srcOpts +
+          "</select>" +
+          '<select id="lstF" onchange="applyF()" style="width:170px"><option value="">All Stages</option>' +
+          [
+            "New",
+            "Contacted",
+            "Interested",
+            "Meeting Scheduled",
+            "Site Visit Scheduled",
+            "Site Visit Done",
+            "Negotiation",
+            "Booked",
+            "Lost",
+          ]
+            .map(function (s) {
+              return (
+                '<option value="' +
+                s +
+                '"' +
+                (leadFilters.status === s ? " selected" : "") +
+                ">" +
+                s +
+                "</option>"
+              );
+            })
+            .join("") +
+          "</select>" +
+          "</div>" +
+          '<div id="lWrap"><div class="spin"></div></div>' +
+          "</div>";
+        await loadLeads();
+      }
+      var searchTimer = null;
+      function onSrch(v) {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function () {
+          leadFilters.search = v;
+          leadFilters.page = 1;
+          loadLeads();
+        }, 350);
+      }
+      function applyF() {
+        leadFilters.source = document.getElementById("lsrcF").value;
+        leadFilters.status = document.getElementById("lstF").value;
+        leadFilters.page = 1;
+        loadLeads();
+      }
+      async function loadLeads() {
+        var w = document.getElementById("lWrap");
+        if (!w) return;
+        w.innerHTML = '<div class="spin"></div>';
+        try {
+          var d = await callApi("getLeads", leadFilters);
+          if (!d.leads || !d.leads.length) {
+            w.innerHTML =
+              '<div class="es"><span class="material-symbols-outlined ms">search_off</span><p>No leads match filters</p></div>';
+            return;
+          }
+          var tp = Math.ceil(d.total / d.limit);
+          var rows = d.leads
+            .map(function (l) {
+              return (
+                "<tr onclick=\"openLeadProfile('" +
+                ej(l.leadId) +
+                '\')"><td class="mono">' +
+                eh(l.leadId) +
+                "</td><td><strong>" +
+                eh(l.name) +
+                '</strong></td><td style="font-size:12px">' +
+                fmtPh(l.phone) +
+                "</td>" +
+                "<td>" +
+                srcBadge(l.source) +
+                "</td>" +
+                '<td style="max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px">' +
+                eh(l.propertyTitle || "—") +
+                "</td>" +
+                "<td>" +
+                stBadge(l.status) +
+                "</td>" +
+                "<td>" +
+                waBadge(l.waStatus) +
+                "</td>" +
+                '<td style="font-size:12px;color:var(--muted)">' +
+                eh(l.assignedTo || "—") +
+                "</td>" +
+                '<td style="font-size:11px;color:var(--muted)">' +
+                ago(l.createdAt) +
+                "</td>" +
+                "</tr>"
+              );
+            })
+            .join("");
+          var pgs = "";
+          if (d.page > 1)
+            pgs +=
+              '<button class="pb" onclick="gp(' +
+              (d.page - 1) +
+              ')">‹</button>';
+          for (var p = 1; p <= Math.min(tp, 7); p++)
+            pgs +=
+              '<button class="pb' +
+              (p === d.page ? " active" : "") +
+              '" onclick="gp(' +
+              p +
+              ')">' +
+              p +
+              "</button>";
+          if (d.page < tp)
+            pgs +=
+              '<button class="pb" onclick="gp(' +
+              (d.page + 1) +
+              ')">›</button>';
+          w.innerHTML =
+            '<div class="tw"><table><thead><tr><th>Lead ID</th><th>Name</th><th>Phone</th><th>Source</th><th>Property</th><th>Stage</th><th>WA</th><th>Assigned</th><th>Created</th></tr></thead><tbody>' +
+            rows +
+            "</tbody></table></div>" +
+            '<div class="pg">' +
+            pgs +
+            '<span class="pinfo">' +
+            d.leads.length +
+            " of " +
+            d.total +
+            "</span></div>";
+        } catch (err) {
+          w.innerHTML =
+            '<div class="es"><span class="material-symbols-outlined ms">error</span><p>' +
+            eh(err.message) +
+            '</p><button class="btn btn-sm" onclick="loadLeads()">Retry</button></div>';
+        }
+      }
+      function gp(p) {
+        leadFilters.page = p;
+        loadLeads();
+      }
+      async function exportCSV() {
+        toast("Generating…", "info");
+        try {
+          var r = await callApi("exportLeads", {
+            search: leadFilters.search,
+            source: leadFilters.source,
+            status: leadFilters.status,
+          });
+          var a = document.createElement("a");
+          a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(r.csv);
+          a.download =
+            "leads-" + new Date().toISOString().slice(0, 10) + ".csv";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          toast("Exported " + r.count + " leads", "success");
+        } catch (e) {
+          toast("Export failed: " + e.message, "error");
+        }
+      }
+
+      // ── LEAD PROFILE MODAL ────────────────────────────────────────────────────────
+      async function openLeadProfile(leadId) {
+        try {
+          var d = await callApi("getLeadDetail", { leadId: leadId });
+          if (!d.lead) {
+            toast("Lead not found", "error");
+            return;
+          }
+          editingLead = d.lead;
+          renderProfile(d.lead);
+          om("mProfile");
+        } catch (e) {
+          toast("Failed to load: " + e.message, "error");
+        }
+      }
+      function renderProfile(l) {
+        document.getElementById("profName").textContent =
+          l.name || "Unnamed Lead";
+        document.getElementById("profSub").innerHTML =
+          eh(l.leadId) +
+          " · " +
+          srcBadge(l.source) +
+          " · Created " +
+          ago(l.createdAt);
+
+        var statusOpts = [
+          "New",
+          "Contacted",
+          "Interested",
+          "Meeting Scheduled",
+          "Site Visit Scheduled",
+          "Site Visit Done",
+          "Negotiation",
+          "Booked",
+          "Lost",
+        ]
+          .map(function (s) {
+            return (
+              "<option" +
+              (l.status === s ? " selected" : "") +
+              ">" +
+              s +
+              "</option>"
+            );
+          })
+          .join("");
+
+        document.getElementById("profBody").innerHTML =
+          '<div class="profile-section">' +
+          '<div class="profile-section-title"><span class="material-symbols-outlined">badge</span>Lead Information</div>' +
+          '<div class="profile-fields">' +
+          field("Name", "pf_name", l.name, "text") +
+          field("Phone", "pf_phone", l.phone, "text", true) +
+          field("Email", "pf_email", l.email, "email") +
+          selectField("Source", "pf_source", l.source, [l.source], true) +
+          field("Property Interested", "pf_prop", l.propertyTitle, "text") +
+          field(
+            "Budget",
+            "pf_budget",
+            l.budget,
+            "text",
+            "",
+            "e.g. 1.5Cr - 2Cr",
+          ) +
+          field(
+            "Location",
+            "pf_location",
+            l.location,
+            "text",
+            "",
+            "e.g. Sector 84, Gurugram",
+          ) +
+          field(
+            "Timeline",
+            "pf_timeline",
+            l.timeline,
+            "text",
+            "",
+            "e.g. Within 3 months",
+          ) +
+          "</div>" +
+          '<div class="fg" style="margin-top:12px"><label class="fl">Requirements</label><textarea id="pf_requirements">' +
+          eh(l.requirements) +
+          "</textarea></div>" +
+          '<div class="fg"><label class="fl">Original Message</label><textarea disabled style="opacity:.7">' +
+          eh(l.message) +
+          "</textarea></div>" +
+          "</div>" +
+          '<div class="profile-section">' +
+          '<div class="profile-section-title"><span class="material-symbols-outlined">timeline</span>Activity Timeline</div>' +
+          '<div class="profile-fields" style="margin-bottom:10px">' +
+          '<div class="fg"><label class="fl">Lead Created</label><input type="text" value="' +
+          eh(fmtDate(l.createdAt)) +
+          '" disabled style="opacity:.6"></div>' +
+          '<div class="fg"><label class="fl">WhatsApp Status</label><input type="text" value="' +
+          eh(l.waStatus || "—") +
+          '" disabled style="opacity:.6"></div>' +
+          "</div>" +
+          '<div class="timeline-row">' +
+          checkField("Call Made", "pf_callMade", l.callMade) +
+          checkField(
+            "Meeting Scheduled",
+            "pf_meetingScheduled",
+            l.meetingScheduled,
+          ) +
+          checkField("Site Visit Done", "pf_siteVisitDone", l.siteVisitDone) +
+          '<div class="fg"><label class="fl">Stage</label><select id="pf_status">' +
+          statusOpts +
+          "</select></div>" +
+          "</div>" +
+          "</div>" +
+          '<div class="profile-section">' +
+          '<div class="profile-section-title"><span class="material-symbols-outlined">event</span>Tasks &amp; Followup</div>' +
+          '<div class="profile-fields">' +
+          field("Followup Due", "pf_followupDue", l.followupDue, "date") +
+          field("Next Call", "pf_nextCall", l.nextCall, "date") +
+          field("Meeting Date", "pf_meetingDate", l.meetingDate, "date") +
+          selectField(
+            "Assigned To",
+            "pf_assignedTo",
+            l.assignedTo,
+            teamNames(),
+            false,
+          ) +
+          "</div>" +
+          "</div>" +
+          '<div class="profile-section">' +
+          '<div class="profile-section-title"><span class="material-symbols-outlined">edit_note</span>Salesperson Notes</div>' +
+          '<textarea id="pf_notes" style="min-height:90px">' +
+          eh(l.notes) +
+          "</textarea>" +
+          "</div>";
+
+        // populate team dropdown after render (need teams loaded)
+        ensureTeamsLoaded().then(function () {
+          var sel = document.getElementById("pf_assignedTo");
+          if (!sel) return;
+          var cur = l.assignedTo || "";
+          var opts =
+            '<option value="">— Unassigned —</option>' +
+            teams
+              .map(function (t) {
+                return (
+                  '<option value="' +
+                  eh(t.name) +
+                  '"' +
+                  (t.name === cur ? " selected" : "") +
+                  ">" +
+                  eh(t.name) +
+                  "</option>"
+                );
+              })
+              .join("");
+          sel.innerHTML = opts;
+        });
+      }
+      function field(label, id, val, type, disabled, placeholder) {
+        return (
+          '<div class="fg"><label class="fl">' +
+          label +
+          '</label><input type="' +
+          type +
+          '" id="' +
+          id +
+          '" value="' +
+          eh(val || "") +
+          '"' +
+          (disabled ? ' disabled style="opacity:.6"' : "") +
+          (placeholder ? ' placeholder="' + placeholder + '"' : "") +
+          "></div>"
+        );
+      }
+      function selectField(label, id, cur, extraOpts, disabled) {
+        var opts = (extraOpts || [])
+          .map(function (o) {
+            return (
+              "<option" + (o === cur ? " selected" : "") + ">" + o + "</option>"
+            );
+          })
+          .join("");
+        return (
+          '<div class="fg"><label class="fl">' +
+          label +
+          '</label><select id="' +
+          id +
+          '"' +
+          (disabled ? ' disabled style="opacity:.6"' : "") +
+          ">" +
+          opts +
+          "</select></div>"
+        );
+      }
+      function checkField(label, id, val) {
+        var checked =
+          val === "Yes" || val === true || val === "true" ? "checked" : "";
+        return (
+          '<div class="fg"><label class="fl">' +
+          label +
+          '</label><div style="display:flex;align-items:center;gap:8px;padding:8px 0"><input type="checkbox" id="' +
+          id +
+          '" ' +
+          checked +
+          ' style="width:18px;height:18px;accent-color:var(--primary)"><span style="font-size:12.5px;color:var(--muted)">Done</span></div></div>'
+        );
+      }
+      function teamNames() {
+        return teams.map(function (t) {
+          return t.name;
+        });
+      }
+      var teamsLoaded = false;
+      async function ensureTeamsLoaded() {
+        if (teamsLoaded) return;
+        try {
+          var d = await callApi("getTeams");
+          teams = d.teams || [];
+          teamsLoaded = true;
+        } catch (e) {}
+      }
+      async function saveProfile() {
+        if (!editingLead) return;
+        var btn = document.getElementById("btnSaveProfile");
+        btn.disabled = true;
+        btn.innerHTML =
+          '<span class="material-symbols-outlined" style="font-size:16px">progress_activity</span>Saving…';
+        var fields = {
+          name: gv("pf_name"),
+          email: gv("pf_email"),
+          propertyTitle: gv("pf_prop"),
+          budget: gv("pf_budget"),
+          location: gv("pf_location"),
+          requirements: gv("pf_requirements"),
+          timeline: gv("pf_timeline"),
+          status: gv("pf_status"),
+          assignedTo: gv("pf_assignedTo"),
+          notes: gv("pf_notes"),
+          followupDue: gv("pf_followupDue"),
+          nextCall: gv("pf_nextCall"),
+          meetingDate: gv("pf_meetingDate"),
+          callMade: gc("pf_callMade") ? "Yes" : "",
+          meetingScheduled: gc("pf_meetingScheduled") ? "Yes" : "",
+          siteVisitDone: gc("pf_siteVisitDone") ? "Yes" : "",
+        };
+        try {
+          await callApi("updateLeadBulk", {
+            leadId: editingLead.leadId,
+            fields: fields,
+          });
+          toast("Profile saved!", "success");
+          cm("mProfile");
+          if (curPage === "leads") loadLeads();
+          if (curPage === "pipeline") pgPipeline(document.getElementById("mc"));
+          if (curPage === "dashboard")
+            pgDashboard(document.getElementById("mc"));
+        } catch (e) {
+          toast("Save failed: " + e.message, "error");
+        }
+        btn.disabled = false;
+        btn.innerHTML =
+          '<span class="material-symbols-outlined" style="font-size:16px">save</span>Save Changes';
+      }
+      function gv(id) {
+        var e = document.getElementById(id);
+        return e ? e.value : "";
+      }
+      function gc(id) {
+        var e = document.getElementById(id);
+        return e ? e.checked : false;
+      }
+
+      // ── PIPELINE / KANBAN ─────────────────────────────────────────────────────────
+      async function pgPipeline(el) {
+        el.innerHTML = '<div class="spin"></div>';
+        await ensureTeamsLoaded();
+        var d = await callApi("getKanbanData");
+        renderKanban(el, d);
+      }
+      function renderKanban(el, d) {
+        var cols = d.statuses
+          .map(function (status) {
+            var leads = d.board[status] || [];
+            var meta = STATUS_META[status] || { color: "#888" };
+            var cards = leads
+              .map(function (l) {
+                return (
+                  '<div class="kanban-card" draggable="true" data-lead-id="' +
+                  eh(l.leadId) +
+                  '" ondragstart="onDragStart(event,\'' +
+                  ej(l.leadId) +
+                  '\')" ondragend="onDragEnd(event)" onclick="openLeadProfile(\'' +
+                  ej(l.leadId) +
+                  "')\">" +
+                  '<div class="kc-top"><div class="kc-name">' +
+                  eh(l.name) +
+                  "</div>" +
+                  srcBadge(l.source) +
+                  "</div>" +
+                  '<div class="kc-prop">' +
+                  eh(l.propertyTitle || "No property specified") +
+                  "</div>" +
+                  '<div class="kc-foot"><span>' +
+                  (l.budget ? eh(l.budget) : eh(fmtPh(l.phone))) +
+                  "</span><span>" +
+                  ago(l.createdAt) +
+                  "</span></div>" +
+                  "</div>"
+                );
+              })
+              .join("");
+            return (
+              '<div class="kanban-col">' +
+              '<div class="kanban-col-hd"><span class="kanban-dot" style="background:' +
+              meta.color +
+              '"></span><span class="kanban-col-title">' +
+              eh(status) +
+              '</span><span class="kanban-count">' +
+              leads.length +
+              "</span></div>" +
+              '<div class="kanban-body" data-status="' +
+              eh(status) +
+              '" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event,\'' +
+              ej(status) +
+              "')\">" +
+              (cards || "") +
+              "</div>" +
+              "</div>"
+            );
+          })
+          .join("");
+        el.innerHTML =
+          '<div class="card" style="padding:14px"><div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">account_tree</span>Sales Pipeline</div><div class="card-sub" style="margin:0">Drag cards between stages • Click a card for full profile</div></div><div class="kanban-wrap">' +
+          cols +
+          "</div></div>";
+      }
+      function onDragStart(e, leadId) {
+        draggedLeadId = leadId;
+        e.target.classList.add("dragging");
+        e.dataTransfer.setData("text/plain", leadId);
+      }
+      function onDragEnd(e) {
+        e.target.classList.remove("dragging");
+      }
+      function onDragOver(e) {
+        e.preventDefault();
+        e.currentTarget.classList.add("dragover");
+      }
+      function onDragLeave(e) {
+        e.currentTarget.classList.remove("dragover");
+      }
+      async function onDrop(e, newStatus) {
+        e.preventDefault();
+        e.currentTarget.classList.remove("dragover");
+        var leadId = draggedLeadId || e.dataTransfer.getData("text/plain");
+        if (!leadId) return;
+        try {
+          await callApi("updateLeadStatusKanban", {
+            leadId: leadId,
+            status: newStatus,
+          });
+          toast("Moved to " + newStatus, "success");
+          pgPipeline(document.getElementById("mc"));
+        } catch (err) {
+          toast("Move failed: " + err.message, "error");
+          pgPipeline(document.getElementById("mc"));
+        }
+      }
+
+      // ── DUPLICATES ────────────────────────────────────────────────────────────────
+      async function pgDuplicates(el) {
+        var d = await callApi("getDuplicates");
+        var dups = d.duplicates || [];
+        if (!dups.length) {
+          el.innerHTML =
+            '<div class="card"><div class="es"><span class="material-symbols-outlined ms">check_circle</span><p>No duplicate leads detected yet</p></div></div>';
+          return;
+        }
+        var rows = dups
+          .map(function (d) {
+            return (
+              '<tr><td class="mono">' +
+              ago(d.timestamp) +
+              '</td><td class="mono">' +
+              eh(d.originalLeadId) +
+              "</td><td>" +
+              srcBadge(d.source) +
+              "</td><td>" +
+              fmtPh(d.phone) +
+              '</td><td style="font-size:12px;color:var(--muted)">' +
+              eh(d.reason) +
+              "</td></tr>"
+            );
+          })
+          .join("");
+        el.innerHTML =
+          '<div class="card"><div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">content_copy</span>Duplicate Leads (' +
+          dups.length +
+          ")</div></div>" +
+          '<div class="tw"><table><thead><tr><th>Detected</th><th>Original Lead</th><th>Source</th><th>Phone</th><th>Reason</th></tr></thead><tbody>' +
+          rows +
+          "</tbody></table></div></div>";
+      }
+
+      // ── AUTOMATION ────────────────────────────────────────────────────────────────
+      async function pgAutomation(el) {
+        var s = await callApi("getSettings");
+        var toggles = [
+          {
+            key: "whatsappEnabled",
+            label: "WhatsApp Automation",
+            desc: "Send WA via AiSensy on new leads",
+            val: s.whatsappEnabled,
+          },
+          {
+            key: "deduplicationEnabled",
+            label: "Duplicate Protection",
+            desc: "Block same phone+source within 24h",
+            val: s.deduplicationEnabled,
+          },
+          {
+            key: "notificationsEnabled",
+            label: "Lead Notifications",
+            desc: "Email/WA alerts on new leads",
+            val: s.notificationsEnabled,
+          },
+          {
+            key: "emailAlerts",
+            label: "Email Alerts",
+            desc: "Email admin on each new lead",
+            val: s.emailAlerts,
+          },
+        ];
+        el.innerHTML =
+          '<div class="g2">' +
+          '<div class="card"><div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">tune</span>Feature Toggles</div></div>' +
+          toggles
+            .map(function (t) {
+              return (
+                '<div class="toggle-row"><div class="tr-info"><div class="trn">' +
+                t.label +
+                '</div><div class="trd">' +
+                t.desc +
+                '</div></div><div class="tgl ' +
+                (t.val ? "on" : "") +
+                '" id="tgl_' +
+                t.key +
+                '" onclick="flipTgl(\'' +
+                t.key +
+                "')\"></div></div>"
+              );
+            })
+            .join("") +
+          "</div>" +
+          '<div class="card"><div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">monitor_heart</span>System Status</div></div>' +
+          [
+            {
+              l: "Webhook Endpoint",
+              v: "Active & listening",
+              on: true,
+              i: "webhook",
+            },
+            { l: "Google Sheets", v: "Connected", on: true, i: "table" },
+            {
+              l: "AiSensy",
+              v: s.whatsappEnabled ? "Enabled" : "Paused",
+              on: s.whatsappEnabled,
+              i: "chat",
+            },
+            {
+              l: "Deduplication",
+              v: s.deduplicationEnabled ? "24h window" : "Disabled",
+              on: s.deduplicationEnabled,
+              i: "content_copy",
+            },
+            {
+              l: "Email Alerts",
+              v: s.emailAlerts ? s.adminEmail || "No email set" : "Disabled",
+              on: s.emailAlerts && !!s.adminEmail,
+              i: "mail",
+            },
+          ]
+            .map(function (r) {
+              return (
+                '<div style="display:flex;align-items:center;gap:11px;padding:10px 12px;background:var(--surface2);border-radius:9px;margin-bottom:7px"><span class="material-symbols-outlined" style="font-size:18px;color:' +
+                (r.on ? "var(--green)" : "var(--red)") +
+                '">' +
+                (r.on ? "check_circle" : "cancel") +
+                '</span><div style="flex:1;font-size:13px;font-weight:700">' +
+                r.l +
+                '</div><div style="font-size:12px;color:var(--muted)">' +
+                eh(r.v) +
+                "</div></div>"
+              );
+            })
+            .join("") +
+          '<div class="div"></div><button class="btn btn-primary" style="width:100%" onclick="nav(\'settings\')"><span class="material-symbols-outlined" style="font-size:16px">settings</span>Configure Integrations</button>' +
+          "</div>" +
+          "</div>";
+      }
+      async function flipTgl(key) {
+        var el = document.getElementById("tgl_" + key);
+        if (!el) return;
+        var on = el.classList.toggle("on");
+        el.style.pointerEvents = "none";
+        try {
+          var s = {};
+          s[key] = on;
+          await callApi("saveSettings", { settings: s });
+          toast(
+            (on ? "Enabled" : "Disabled") +
+              " " +
+              key.replace(/([A-Z])/g, " $1").trim(),
+            "success",
+          );
+        } catch (e) {
+          el.classList.toggle("on");
+          toast("Failed: " + e.message, "error");
+        }
+        el.style.pointerEvents = "";
+      }
+
+      // ── ROUTING ───────────────────────────────────────────────────────────────────
+      async function pgRouting(el) {
+        var d = await callApi("getRoutingRules");
+        await ensureTeamsLoaded();
+        routingRules = d.rules || [];
+        renderRoutingUI(el);
+      }
+      function renderRoutingUI(el) {
+        var teamOpts =
+          '<option value="">— Assign to —</option>' +
+          teams
+            .map(function (t) {
+              return (
+                '<option value="' + eh(t.name) + '">' + eh(t.name) + "</option>"
+              );
+            })
+            .join("");
+        var rulesHtml = routingRules.length
+          ? routingRules.map(ruleRow).join("")
+          : '<div class="es" style="padding:28px"><span class="material-symbols-outlined ms">alt_route</span><p>No rules yet. Click + Add Rule.</p></div>';
+        el.innerHTML =
+          '<div class="card">' +
+          '<div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">alt_route</span>Lead Routing Rules</div>' +
+          '<div style="display:flex;gap:6px"><button class="btn btn-sm" onclick="addRule()"><span class="material-symbols-outlined" style="font-size:15px">add</span>Add Rule</button><button class="btn btn-primary btn-sm" onclick="saveRules()"><span class="material-symbols-outlined" style="font-size:15px">save</span>Save</button></div></div>' +
+          '<p class="tm" style="font-size:12px;margin-bottom:10px">First matching rule wins.</p>' +
+          '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr auto auto;gap:6px;padding:0 0 7px;font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)"><div>Rule Name</div><div>Field</div><div>Op</div><div>Value</div><div>Assign</div><div>On</div><div></div></div>' +
+          '<div id="rList" style="margin-top:7px">' +
+          rulesHtml +
+          "</div>" +
+          '<button class="btn" style="margin-top:9px;width:100%" onclick="addRule()"><span class="material-symbols-outlined" style="font-size:15px">add</span>Add Rule</button>' +
+          "</div>" +
+          '<div class="card" style="margin-top:14px"><div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">lightbulb</span>Rule Examples</div></div>' +
+          '<div class="g2" style="margin:0">' +
+          [
+            "Source = Housing.com → Assign to Agent A",
+            "Source = 99acres → Assign to Agent B",
+            "Property contains M3M → Assign to M3M specialist",
+            "Location contains Noida → Assign to Noida team",
+          ]
+            .map(function (x) {
+              return (
+                '<div style="background:var(--surface2);border-radius:9px;padding:10px;font-size:12px;color:var(--muted)">' +
+                x +
+                "</div>"
+              );
+            })
+            .join("") +
+          "</div></div>";
+        document.querySelectorAll(".rassign").forEach(function (sel) {
+          var cur = sel.dataset.cur || "";
+          sel.innerHTML = teamOpts;
+          if (cur)
+            for (var o of sel.options)
+              if (o.value === cur) {
+                o.selected = true;
+                break;
+              }
+        });
+      }
+      function ruleRow(r, i) {
+        return (
+          '<div class="rule-row" id="rr' +
+          i +
+          '">' +
+          '<input type="text" value="' +
+          eh(r.name || "") +
+          '" placeholder="Rule name" onchange="ur(' +
+          i +
+          ",'name',this.value)\">" +
+          '<select onchange="ur(' +
+          i +
+          ",'field',this.value)\">" +
+          ["source", "propertyTitle", "name", "email", "location"]
+            .map(function (f) {
+              return (
+                "<option" +
+                (r.field === f ? " selected" : "") +
+                ">" +
+                f +
+                "</option>"
+              );
+            })
+            .join("") +
+          "</select>" +
+          '<select onchange="ur(' +
+          i +
+          ",'operator',this.value)\">" +
+          ["equals", "contains", "starts"]
+            .map(function (o) {
+              return (
+                "<option" +
+                (r.operator === o ? " selected" : "") +
+                ">" +
+                o +
+                "</option>"
+              );
+            })
+            .join("") +
+          "</select>" +
+          '<input type="text" value="' +
+          eh(r.value || "") +
+          '" placeholder="Value" onchange="ur(' +
+          i +
+          ",'value',this.value)\">" +
+          '<select class="rassign" data-cur="' +
+          eh(r.assignTo || "") +
+          '" onchange="ur(' +
+          i +
+          ",'assignTo',this.value)\"></select>" +
+          '<div class="tgl ' +
+          (r.enabled ? "on" : "") +
+          '" onclick="toggleR(' +
+          i +
+          ')"></div>' +
+          '<button class="btn btn-danger btn-sm" onclick="delRule(' +
+          i +
+          ')" title="Delete"><span class="material-symbols-outlined" style="font-size:15px">delete</span></button>' +
+          "</div>"
+        );
+      }
+      function ur(i, f, v) {
+        if (routingRules[i]) routingRules[i][f] = v;
+      }
+      function toggleR(i) {
+        if (routingRules[i]) {
+          routingRules[i].enabled = !routingRules[i].enabled;
+          var e = document.querySelector("#rr" + i + " .tgl");
+          if (e) e.classList.toggle("on", routingRules[i].enabled);
+        }
+      }
+      function delRule(i) {
+        routingRules.splice(i, 1);
+        renderRoutingUI(document.getElementById("mc"));
+      }
+      function addRule() {
+        routingRules.push({
+          id: "r" + Date.now(),
+          name: "",
+          field: "source",
+          operator: "equals",
+          value: "",
+          assignTo: "",
+          enabled: false,
+        });
+        renderRoutingUI(document.getElementById("mc"));
+      }
+      async function saveRules() {
+        try {
+          await callApi("saveRoutingRules", { rules: routingRules });
+          toast("Routing rules saved!", "success");
+        } catch (e) {
+          toast("Save failed: " + e.message, "error");
+        }
+      }
+
+      // ── CAMPAIGNS ─────────────────────────────────────────────────────────────────
+      async function pgCampaigns(el) {
+        var s = await callApi("getSettings");
+        var src = await callApi("getSources");
+        var srcRows = (src.sources || [])
+          .map(function (s) {
+            return (
+              '<div style="display:flex;align-items:center;gap:12px;padding:11px;background:var(--surface2);border-radius:9px;margin-bottom:7px;border-left:3px solid var(--primary)">' +
+              '<div style="flex:1"><div style="font-weight:700">' +
+              eh(s.name) +
+              '</div><div style="font-size:12px;color:var(--muted)">Campaign: <span style="color:var(--text)">' +
+              eh(s.campaignOverride || s.aiSensyCampaign || "(default)") +
+              "</span></div></div>" +
+              '<span class="badge ' +
+              (s.enabled ? "bsent" : "boff") +
+              '">' +
+              (s.enabled ? "ACTIVE" : "PAUSED") +
+              "</span></div>"
+            );
+          })
+          .join("");
+        el.innerHTML =
+          '<div class="g2">' +
+          '<div class="card"><div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">campaign</span>Campaign Config</div></div>' +
+          '<div class="fg"><label class="fl">Default Campaign Name</label><input type="text" id="cDef" value="' +
+          eh(s.aiSensyCampaign || "") +
+          '"></div>' +
+          '<div class="fg"><label class="fl">Template Variables (in order)</label>' +
+          '<select id="cTp1" style="margin-bottom:6px">' +
+          tpOpt(s.templateParams, 0) +
+          "</select>" +
+          '<select id="cTp2" style="margin-bottom:6px">' +
+          tpOpt(s.templateParams, 1) +
+          "</select>" +
+          '<select id="cTp3">' +
+          tpOpt(s.templateParams, 2) +
+          "</select>" +
+          '<p class="fhint">Match the {{1}}, {{2}}, {{3}} variables in your AiSensy approved template.</p>' +
+          "</div>" +
+          '<button class="btn btn-primary" onclick="saveCamp()"><span class="material-symbols-outlined" style="font-size:16px">save</span>Save Campaign</button>' +
+          "</div>" +
+          '<div class="card"><div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">science</span>Test WhatsApp</div></div>' +
+          '<p class="tm" style="font-size:12px;margin-bottom:14px">Send a test message to verify AiSensy is configured correctly.</p>' +
+          '<button class="btn btn-primary" style="width:100%" onclick="om(\'mTestWa\')"><span class="material-symbols-outlined" style="font-size:16px">send</span>Send Test Message</button>' +
+          "</div>" +
+          "</div>" +
+          '<div class="card"><div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">bar_chart</span>Active Source Campaigns</div></div>' +
+          srcRows +
+          "</div>";
+      }
+      function tpOpt(arr, idx) {
+        var opts = [
+          { v: "", l: "(none)" },
+          { v: "name", l: "Lead Name" },
+          { v: "propertyTitle", l: "Property Title" },
+          { v: "source", l: "Source" },
+          { v: "phone", l: "Phone" },
+        ];
+        var cur =
+          arr && arr[idx] !== undefined ? arr[idx] : idx === 0 ? "name" : "";
+        return opts
+          .map(function (o) {
+            return (
+              '<option value="' +
+              o.v +
+              '"' +
+              (o.v === cur ? " selected" : "") +
+              ">{{" +
+              (idx + 1) +
+              "}} = " +
+              o.l +
+              "</option>"
+            );
+          })
+          .join("");
+      }
+      async function saveCamp() {
+        var tp = [
+          document.getElementById("cTp1").value,
+          document.getElementById("cTp2").value,
+          document.getElementById("cTp3").value,
+        ].filter(function (v) {
+          return v !== "";
+        });
+        try {
+          await callApi("saveSettings", {
+            settings: {
+              aiSensyCampaign: document.getElementById("cDef").value,
+              templateParams: tp,
+            },
+          });
+          toast("Campaign saved!", "success");
+        } catch (e) {
+          toast("Failed: " + e.message, "error");
+        }
+      }
+      async function execTestWa() {
+        var name = document.getElementById("twN").value.trim(),
+          phone = document.getElementById("twP").value.trim();
+        var res = document.getElementById("twRes"),
+          btn = document.getElementById("btnTw");
+        if (!name) {
+          toast("Enter name", "warning");
+          return;
+        }
+        if (!phone) {
+          toast("Enter phone", "warning");
+          return;
+        }
+        btn.disabled = true;
+        btn.innerHTML =
+          '<span class="material-symbols-outlined" style="font-size:16px">progress_activity</span>Sending…';
+        res.style.display = "block";
+        res.style.background = "var(--surface2)";
+        res.style.color = "var(--text)";
+        res.textContent = "Sending…";
+        try {
+          var r = await callApi("testAiSensy", { name: name, phone: phone });
+          res.style.background = r.success
+            ? "var(--green-bg)"
+            : "var(--red-bg)";
+          res.style.color = r.success ? "var(--green)" : "var(--red)";
+          res.textContent =
+            (r.success ? "✅ Sent: " : "❌ Failed: ") + (r.message || "");
+          toast(
+            r.success ? "Test sent!" : "Failed: " + r.message,
+            r.success ? "success" : "error",
+          );
+        } catch (e) {
+          res.style.background = "var(--red-bg)";
+          res.style.color = "var(--red)";
+          res.textContent = "❌ " + e.message;
+        }
+        btn.disabled = false;
+        btn.innerHTML =
+          '<span class="material-symbols-outlined" style="font-size:16px">send</span>Send Test';
+      }
+
+      // ── LEAD SOURCES ──────────────────────────────────────────────────────────────
+      async function pgSources(el) {
+        var d = await callApi("getSources");
+        sources = d.sources || [];
+        renderSourcesUI(el);
+      }
+      function renderSourcesUI(el) {
+        var srcIcons = {
+          housing: "home",
+          "99acres": "landscape",
+          magicbricks: "apartment",
+          meta: "thumb_up",
+          google: "travel_explore",
+          sulekha: "call",
+          website: "language",
+          indiamart: "storefront",
+        };
+        var cards = sources
+          .map(function (s, i) {
+            return (
+              '<div class="int-card" id="src' +
+              i +
+              '" style="margin-bottom:8px"><div style="display:flex;align-items:center;gap:12px;padding:12px 14px">' +
+              '<div class="int-icon" style="background:var(--primary-soft);color:var(--primary)"><span class="material-symbols-outlined">' +
+              (srcIcons[s.key] || "hub") +
+              "</span></div>" +
+              '<div style="flex:1;min-width:0">' +
+              '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
+              '<input type="text" value="' +
+              eh(s.name) +
+              '" placeholder="Source name" style="font-weight:700;flex:1" onchange="us(' +
+              i +
+              ",'name',this.value)\">" +
+              '<div class="tgl ' +
+              (s.enabled ? "on" : "") +
+              '" onclick="toggleSrc(' +
+              i +
+              ')" title="Enable/Disable"></div>' +
+              '<button class="btn btn-danger btn-sm" onclick="delSrc(' +
+              i +
+              ')"><span class="material-symbols-outlined" style="font-size:15px">delete</span></button>' +
+              "</div>" +
+              '<div class="fr">' +
+              '<div class="fg" style="margin:0"><label class="fl">Webhook URL Param</label><input type="text" value="' +
+              eh(s.webhookParam || s.key) +
+              '" placeholder="e.g. housing" onchange="us(' +
+              i +
+              ",'webhookParam',this.value)\"></div>" +
+              '<div class="fg" style="margin:0"><label class="fl">Campaign Override</label><input type="text" value="' +
+              eh(s.campaignOverride || "") +
+              '" placeholder="Leave blank = default" onchange="us(' +
+              i +
+              ",'campaignOverride',this.value)\"></div>" +
+              "</div>" +
+              "</div>" +
+              "</div></div>"
+            );
+          })
+          .join("");
+
+        el.innerHTML =
+          '<div class="card">' +
+          '<div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">hub</span>Lead Sources</div>' +
+          '<div style="display:flex;gap:6px">' +
+          '<button class="btn btn-sm" onclick="addSrc()"><span class="material-symbols-outlined" style="font-size:15px">add</span>Add Source</button>' +
+          '<button class="btn btn-primary btn-sm" onclick="saveSources()"><span class="material-symbols-outlined" style="font-size:15px">save</span>Save Sources</button>' +
+          "</div></div>" +
+          '<p class="tm" style="font-size:12px;margin-bottom:12px">Enable/disable sources, set per-source campaign overrides, and manage webhook URL parameters.</p>' +
+          '<div id="srcList">' +
+          cards +
+          "</div>" +
+          '<button class="btn" style="width:100%;margin-top:6px" onclick="addSrc()"><span class="material-symbols-outlined" style="font-size:15px">add</span>Add Custom Source</button>' +
+          "</div>" +
+          '<div class="card" style="margin-top:14px">' +
+          '<div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">link</span>Webhook URL Generator</div></div>' +
+          '<div class="fr">' +
+          '<div class="fg"><label class="fl">Source</label><select id="wuSrc">' +
+          sources
+            .map(function (s) {
+              return (
+                '<option value="' +
+                eh(s.webhookParam || s.key) +
+                '">' +
+                eh(s.name) +
+                "</option>"
+              );
+            })
+            .join("") +
+          "</select></div>" +
+          '<div class="fg"><label class="fl">Generated URL</label><div class="codeblock" id="wuUrl">Click Generate →</div></div>' +
+          "</div>" +
+          '<button class="btn btn-primary" onclick="genWurl()"><span class="material-symbols-outlined" style="font-size:16px">link</span>Generate URL</button>' +
+          '<button class="btn" style="margin-left:7px" onclick="copyEl(\'wuUrl\')"><span class="material-symbols-outlined" style="font-size:16px">content_copy</span>Copy</button>' +
+          "</div>";
+      }
+      function us(i, f, v) {
+        if (sources[i]) sources[i][f] = v;
+      }
+      function toggleSrc(i) {
+        if (sources[i]) {
+          sources[i].enabled = !sources[i].enabled;
+          var e = document.querySelector("#src" + i + " .tgl");
+          if (e) e.classList.toggle("on", sources[i].enabled);
+        }
+      }
+      function delSrc(i) {
+        sources.splice(i, 1);
+        renderSourcesUI(document.getElementById("mc"));
+      }
+      function addSrc() {
+        sources.push({
+          key: "custom_" + Date.now(),
+          name: "New Source",
+          enabled: false,
+          campaignOverride: "",
+          webhookParam: "newsource",
+        });
+        renderSourcesUI(document.getElementById("mc"));
+      }
+      async function saveSources() {
+        try {
+          await callApi("saveSources", { sources: sources });
+          toast("Sources saved!", "success");
+        } catch (e) {
+          toast("Failed: " + e.message, "error");
+        }
+      }
+      async function genWurl() {
+        var sk = document.getElementById("wuSrc").value;
+        try {
+          var r = await callApi("generateWebhookUrl", { sourceKey: sk });
+          document.getElementById("wuUrl").textContent = r.url;
+        } catch (e) {
+          document.getElementById("wuUrl").textContent =
+            "Deploy script first to generate URL";
+        }
+      }
+
+      // ── PROPERTY INVENTORY ────────────────────────────────────────────────────────
+      async function pgProperties(el) {
+        var d = await callApi("getProperties", {});
+        properties = d.properties || [];
+        renderPropertiesUI(el);
+      }
+      function renderPropertiesUI(el) {
+        var statusBadgeMap = {
+          Available: "bsent",
+          Blocked: "bpend",
+          Booked: "bbok",
+        };
+        var rows = properties.length
+          ? properties
+              .map(function (p, i) {
+                return (
+                  '<tr><td class="mono">' +
+                  eh(p.unitId) +
+                  "</td>" +
+                  '<td><input type="text" value="' +
+                  eh(p.project) +
+                  '" style="font-size:12px;font-weight:700" onchange="up(' +
+                  i +
+                  ",'project',this.value)\"></td>" +
+                  '<td><input type="text" value="' +
+                  eh(p.tower) +
+                  '" style="font-size:12px;width:70px" onchange="up(' +
+                  i +
+                  ",'tower',this.value)\"></td>" +
+                  '<td><input type="text" value="' +
+                  eh(p.unitNo) +
+                  '" style="font-size:12px;width:80px" onchange="up(' +
+                  i +
+                  ",'unitNo',this.value)\"></td>" +
+                  '<td><input type="text" value="' +
+                  eh(p.size) +
+                  '" style="font-size:12px;width:90px" onchange="up(' +
+                  i +
+                  ',\'size\',this.value)" placeholder="sqft"></td>' +
+                  '<td><input type="text" value="' +
+                  eh(p.price) +
+                  '" style="font-size:12px;width:100px" onchange="up(' +
+                  i +
+                  ',\'price\',this.value)" placeholder="₹"></td>' +
+                  '<td><select style="font-size:11px;padding:4px 6px;width:100px" onchange="up(' +
+                  i +
+                  ",'status',this.value)\">" +
+                  ["Available", "Blocked", "Booked"]
+                    .map(function (s) {
+                      return (
+                        "<option" +
+                        (p.status === s ? " selected" : "") +
+                        ">" +
+                        s +
+                        "</option>"
+                      );
+                    })
+                    .join("") +
+                  "</select></td>" +
+                  '<td style="white-space:nowrap"><button class="btn btn-success btn-sm" onclick="saveOneProperty(' +
+                  i +
+                  ')"><span class="material-symbols-outlined" style="font-size:14px">save</span></button> <button class="btn btn-danger btn-sm" onclick="delProperty(' +
+                  i +
+                  ')"><span class="material-symbols-outlined" style="font-size:14px">delete</span></button></td>' +
+                  "</tr>"
+                );
+              })
+              .join("")
+          : '<tr><td colspan="8" class="es" style="padding:30px"><span class="material-symbols-outlined ms">apartment</span><p>No units yet. Click + Add Unit.</p></td></tr>';
+
+        var avail = properties.filter(function (p) {
+          return p.status === "Available";
+        }).length;
+        var blocked = properties.filter(function (p) {
+          return p.status === "Blocked";
+        }).length;
+        var booked = properties.filter(function (p) {
+          return p.status === "Booked";
+        }).length;
+
+        el.innerHTML =
+          '<div class="stats-grid">' +
+          kpi(
+            "blue",
+            "apartment",
+            "Total Units",
+            properties.length,
+            "In inventory",
+          ) +
+          kpi("green", "check_circle", "Available", avail, "Ready to sell") +
+          kpi("amber", "lock", "Blocked", blocked, "Held / reserved") +
+          kpi("purple", "workspace_premium", "Booked", booked, "Sold") +
+          "</div>" +
+          '<div class="card">' +
+          '<div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">apartment</span>Property Inventory</div>' +
+          '<button class="btn btn-primary btn-sm" onclick="addProperty()"><span class="material-symbols-outlined" style="font-size:15px">add</span>Add Unit</button></div>' +
+          '<div class="fbar"><div class="sw"><span class="material-symbols-outlined ms">search</span><input type="text" id="propSearch" placeholder="Search project, tower, unit…" oninput="propSearchFn(this.value)"></div></div>' +
+          '<div class="tw"><table><thead><tr><th>Unit ID</th><th>Project</th><th>Tower</th><th>Unit No</th><th>Size</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead><tbody id="propRows">' +
+          rows +
+          "</tbody></table></div>" +
+          "</div>";
+      }
+      var propSearchTimer = null;
+      function propSearchFn(v) {
+        clearTimeout(propSearchTimer);
+        propSearchTimer = setTimeout(async function () {
+          var d = await callApi("getProperties", { search: v });
+          properties = d.properties || [];
+          renderPropertiesUI(document.getElementById("mc"));
+        }, 300);
+      }
+      function up(i, f, v) {
+        if (properties[i]) properties[i][f] = v;
+      }
+      function addProperty() {
+        properties.unshift({
+          rowIndex: null,
+          unitId: "(new)",
+          project: "",
+          tower: "",
+          unitNo: "",
+          size: "",
+          price: "",
+          status: "Available",
+          notes: "",
+        });
+        renderPropertiesUI(document.getElementById("mc"));
+      }
+      async function saveOneProperty(i) {
+        try {
+          var r = await callApi("saveProperty", { property: properties[i] });
+          toast("Unit " + (r.unitId || "") + " saved", "success");
+          pgProperties(document.getElementById("mc"));
+        } catch (e) {
+          toast("Save failed: " + e.message, "error");
+        }
+      }
+      async function delProperty(i) {
+        var p = properties[i];
+        if (!p.rowIndex) {
+          properties.splice(i, 1);
+          renderPropertiesUI(document.getElementById("mc"));
+          return;
+        }
+        try {
+          await callApi("deleteProperty", { rowIndex: p.rowIndex });
+          toast("Unit deleted", "success");
+          pgProperties(document.getElementById("mc"));
+        } catch (e) {
+          toast("Delete failed: " + e.message, "error");
+        }
+      }
+
+      // ── TEAM MEMBERS ──────────────────────────────────────────────────────────────
+      async function pgTeam(el) {
+        var d = await callApi("getTeams");
+        teams = d.teams || [];
+        teamsLoaded = true;
+        renderTeamUI(el);
+      }
+      function renderTeamUI(el) {
+        var rows = teams.length
+          ? teams
+              .map(function (t, i) {
+                return (
+                  '<div class="team-row" id="tr' +
+                  i +
+                  '">' +
+                  '<input type="text" value="' +
+                  eh(t.name || "") +
+                  '" placeholder="Full name" onchange="ut(' +
+                  i +
+                  ",'name',this.value)\">" +
+                  '<input type="email" value="' +
+                  eh(t.email || "") +
+                  '" placeholder="email@company.com" onchange="ut(' +
+                  i +
+                  ",'email',this.value)\">" +
+                  '<input type="tel" value="' +
+                  eh(t.phone || "") +
+                  '" placeholder="91XXXXXXXXXX" onchange="ut(' +
+                  i +
+                  ",'phone',this.value)\">" +
+                  '<select onchange="ut(' +
+                  i +
+                  ",'role',this.value)\">" +
+                  ["Agent", "Manager", "Admin"]
+                    .map(function (r) {
+                      return (
+                        "<option" +
+                        (t.role === r ? " selected" : "") +
+                        ">" +
+                        r +
+                        "</option>"
+                      );
+                    })
+                    .join("") +
+                  "</select>" +
+                  '<button class="btn btn-danger btn-sm" onclick="delTeam(' +
+                  i +
+                  ')"><span class="material-symbols-outlined" style="font-size:15px">delete</span></button>' +
+                  "</div>"
+                );
+              })
+              .join("")
+          : '<div class="es" style="padding:24px"><span class="material-symbols-outlined ms">group</span><p>No team members yet</p></div>';
+
+        el.innerHTML =
+          '<div class="card">' +
+          '<div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">group</span>Team Members</div>' +
+          '<div style="display:flex;gap:6px">' +
+          '<button class="btn btn-sm" onclick="addTeam()"><span class="material-symbols-outlined" style="font-size:15px">add</span>Add Member</button>' +
+          '<button class="btn btn-primary btn-sm" onclick="saveTeam()"><span class="material-symbols-outlined" style="font-size:15px">save</span>Save Team</button>' +
+          "</div></div>" +
+          '<p class="tm" style="font-size:12px;margin-bottom:10px">Team members appear in Lead Routing &amp; Profile assignment dropdowns.</p>' +
+          '<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr auto;gap:6px;padding:0 0 7px;font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)">' +
+          "<div>Name</div><div>Email</div><div>Phone</div><div>Role</div><div></div>" +
+          "</div>" +
+          '<div id="teamList" style="margin-top:7px">' +
+          rows +
+          "</div>" +
+          '<button class="btn" style="width:100%;margin-top:9px" onclick="addTeam()"><span class="material-symbols-outlined" style="font-size:15px">add</span>Add Member</button>' +
+          "</div>";
+      }
+      function ut(i, f, v) {
+        if (teams[i]) teams[i][f] = v;
+      }
+      function delTeam(i) {
+        teams.splice(i, 1);
+        renderTeamUI(document.getElementById("mc"));
+      }
+      function addTeam() {
+        teams.push({ name: "", email: "", phone: "", role: "Agent" });
+        renderTeamUI(document.getElementById("mc"));
+      }
+      async function saveTeam() {
+        try {
+          await callApi("saveTeams", { teams: teams });
+          teamsLoaded = true;
+          toast("Team saved!", "success");
+        } catch (e) {
+          toast("Failed: " + e.message, "error");
+        }
+      }
+
+      // ── BRANDING ──────────────────────────────────────────────────────────────────
+      async function pgBranding(el) {
+        var b = await callApi("getBranding");
+        el.innerHTML =
+          '<div class="g12">' +
+          '<div class="card">' +
+          '<div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">palette</span>Branding Settings</div></div>' +
+          '<div class="fg"><label class="fl">Company Name</label><input type="text" id="bName" value="' +
+          eh(b.companyName || "") +
+          '" placeholder="Your Company Name"></div>' +
+          '<div class="fg"><label class="fl">Tagline / Sub-title</label><input type="text" id="bTag" value="' +
+          eh(b.companyTagline || "") +
+          '" placeholder="Real Estate Sales Platform"></div>' +
+          '<div class="fg"><label class="fl">Logo Emoji</label><input type="text" id="bEmoji" value="' +
+          eh(b.logoEmoji || "🏢") +
+          '" placeholder="🏢" style="font-size:24px;text-align:center"></div>' +
+          '<div class="fg"><label class="fl">Accent Color</label><input type="color" id="bColor" value="' +
+          eh(b.accentColor || "#0051d5") +
+          '" style="height:42px;padding:3px;cursor:pointer"></div>' +
+          '<button class="btn btn-primary" onclick="saveBranding()" style="width:100%"><span class="material-symbols-outlined" style="font-size:16px">save</span>Save Branding</button>' +
+          '<p class="fhint" style="margin-top:8px">Changes apply immediately on next page load.</p>' +
+          "</div>" +
+          '<div class="card">' +
+          '<div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">visibility</span>Preview</div></div>' +
+          '<div id="brandPreview" style="background:var(--surface2);border-radius:12px;padding:20px">' +
+          renderBrandPreview(b) +
+          "</div>" +
+          '<div class="div"></div>' +
+          '<div style="background:var(--surface2);border-radius:12px;padding:16px">' +
+          '<div style="font-weight:800;font-size:13px;margin-bottom:8px;display:flex;align-items:center;gap:6px"><span class="material-symbols-outlined ms" style="font-size:17px">info</span>Multi-Tenant Ready</div>' +
+          '<p style="font-size:12.5px;color:var(--muted);line-height:1.9">Each client gets their own Apps Script deployment with their own Script Properties:<br>' +
+          "• Company name &amp; branding per client<br>• API keys per client<br>• Leads &amp; data 100% isolated<br>• Each client manages their own team &amp; pipeline</p>" +
+          "</div>" +
+          "</div>" +
+          "</div>";
+        document.getElementById("bName").addEventListener("input", livePreview);
+        document.getElementById("bTag").addEventListener("input", livePreview);
+        document
+          .getElementById("bEmoji")
+          .addEventListener("input", livePreview);
+        document
+          .getElementById("bColor")
+          .addEventListener("input", livePreview);
+      }
+      function renderBrandPreview(b) {
+        var c = b.accentColor || "#0051d5";
+        return (
+          '<div style="display:flex;align-items:center;gap:11px;padding:14px;background:var(--primary-dark);border-radius:12px;margin-bottom:14px">' +
+          '<span style="font-size:24px">' +
+          eh(b.logoEmoji || "🏢") +
+          "</span>" +
+          "<div>" +
+          '<div style="font-size:17px;font-weight:800;color:#fff;letter-spacing:-.3px">' +
+          eh(b.companyName || "OneX CRM") +
+          "</div>" +
+          '<div style="font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-top:2px">' +
+          eh(b.companyTagline || "Real Estate Sales Platform") +
+          "</div>" +
+          "</div></div>" +
+          '<div style="font-size:12px;color:var(--muted);text-align:center;padding:8px">Email subject preview:<br><strong style="color:var(--text)">[' +
+          eh(b.companyName || "OneX CRM") +
+          "] New Lead: John Doe (Housing.com)</strong></div>"
+        );
+      }
+      function livePreview() {
+        var b = {
+          companyName: document.getElementById("bName").value,
+          companyTagline: document.getElementById("bTag").value,
+          logoEmoji: document.getElementById("bEmoji").value,
+          accentColor: document.getElementById("bColor").value,
+        };
+        var p = document.getElementById("brandPreview");
+        if (p) p.innerHTML = renderBrandPreview(b);
+      }
+      async function saveBranding() {
+        var b = {
+          companyName: document.getElementById("bName").value,
+          companyTagline: document.getElementById("bTag").value,
+          logoEmoji: document.getElementById("bEmoji").value,
+          accentColor: document.getElementById("bColor").value,
+        };
+        try {
+          await callApi("saveBranding", { branding: b });
+          toast("Branding saved!", "success");
+          document.getElementById("lgEmoji").textContent = b.logoEmoji || "🏢";
+          document.getElementById("lgName").textContent =
+            b.companyName || "OneX CRM";
+          document.getElementById("lgSub").textContent =
+            b.companyTagline || "Real Estate Sales Platform";
+          document.title = b.companyName + " CRM";
+        } catch (e) {
+          toast("Failed: " + e.message, "error");
+        }
+      }
+
+      // ── ERRORS ────────────────────────────────────────────────────────────────────
+      async function pgErrors(el) {
+        var d = await callApi("getErrors");
+        var errs = d.errors || [],
+          unres = errs.filter(function (e) {
+            return e.resolved !== "Yes";
+          }).length;
+        var eb = document.getElementById("eBadge");
+        if (eb) {
+          eb.textContent = unres;
+          eb.style.display = unres > 0 ? "" : "none";
+        }
+        if (!errs.length) {
+          el.innerHTML =
+            '<div class="card"><div class="es"><span class="material-symbols-outlined ms">check_circle</span><p>No errors — system healthy</p></div></div>';
+          return;
+        }
+        var rows = errs
+          .map(function (e) {
+            var rb = e.leadId
+              ? '<button class="btn btn-amber btn-sm" onclick="retryWa(\'' +
+                ej(e.leadId) +
+                '\')"><span class="material-symbols-outlined" style="font-size:14px">refresh</span>Retry WA</button>'
+              : "";
+            var res =
+              e.resolved === "Yes"
+                ? '<span class="badge bsent">RESOLVED</span>'
+                : '<button class="btn btn-success btn-sm" onclick="resolveErr(' +
+                  e.rowIndex +
+                  ')"><span class="material-symbols-outlined" style="font-size:14px">check</span>Resolve</button>';
+            return (
+              '<tr style="' +
+              (e.resolved === "Yes" ? "opacity:.5" : "") +
+              '" onclick="return false"><td class="mono">' +
+              ago(e.timestamp) +
+              '</td><td class="mono">' +
+              eh(e.leadId || "—") +
+              '</td><td><span class="badge bfail">' +
+              eh(e.errorType) +
+              '</span></td><td style="max-width:260px;font-size:12px;word-break:break-word">' +
+              eh(e.errorMessage) +
+              '</td><td style="white-space:nowrap;display:flex;gap:4px">' +
+              res +
+              rb +
+              "</td></tr>"
+            );
+          })
+          .join("");
+        el.innerHTML =
+          '<div class="card"><div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">error</span>Error Center ' +
+          (unres > 0
+            ? '<span style="font-size:11px;font-weight:600;color:var(--red)">(' +
+              unres +
+              " unresolved)</span>"
+            : "") +
+          '</div><button class="btn btn-sm" onclick="pgErrors(document.getElementById(\'mc\'))"><span class="material-symbols-outlined" style="font-size:15px">refresh</span></button></div>' +
+          '<div class="tw"><table><thead><tr><th>Time</th><th>Lead ID</th><th>Type</th><th>Error</th><th>Actions</th></tr></thead><tbody>' +
+          rows +
+          "</tbody></table></div></div>";
+      }
+      async function resolveErr(ri) {
+        try {
+          await callApi("resolveError", { rowIndex: ri });
+          toast("Resolved", "success");
+          pgErrors(document.getElementById("mc"));
+        } catch (e) {
+          toast("Failed: " + e.message, "error");
+        }
+      }
+      async function retryWa(leadId) {
+        try {
+          toast("Retrying…", "info");
+          var r = await callApi("retryWhatsApp", { leadId: leadId });
+          toast(
+            r.success ? "WhatsApp sent!" : "Failed: " + r.message,
+            r.success ? "success" : "error",
+          );
+          pgErrors(document.getElementById("mc"));
+        } catch (e) {
+          toast("Error: " + e.message, "error");
+        }
+      }
+
+      // ── LOGS ──────────────────────────────────────────────────────────────────────
+      async function pgLogs(el) {
+        var d = await callApi("getLogs"),
+          logs = d.logs || [];
+        if (!logs.length) {
+          el.innerHTML =
+            '<div class="card"><div class="es"><span class="material-symbols-outlined ms">history</span><p>No log entries yet</p></div></div>';
+          return;
+        }
+        var rows = logs
+          .map(function (l) {
+            var rc =
+              l.result === "SUCCESS"
+                ? "bsent"
+                : l.result === "FAILED" || l.result === "ERROR"
+                  ? "bfail"
+                  : "bpend";
+            return (
+              '<tr onclick="return false"><td class="mono" style="white-space:nowrap">' +
+              ago(l.timestamp) +
+              '</td><td class="mono">' +
+              eh(l.leadId || "—") +
+              "</td><td>" +
+              srcBadge(l.source) +
+              '</td><td style="font-size:12px">' +
+              fmtPh(l.phone) +
+              "</td><td><strong>" +
+              eh(l.action) +
+              '</strong></td><td><span class="badge ' +
+              rc +
+              '">' +
+              eh(l.result) +
+              '</span></td><td style="font-size:11px;color:var(--muted)">' +
+              eh(l.responseCode || "—") +
+              '</td><td style="font-size:12px;max-width:180px;word-break:break-word">' +
+              eh(l.message || "") +
+              "</td></tr>"
+            );
+          })
+          .join("");
+        el.innerHTML =
+          '<div class="card"><div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">history</span>Audit Log <span style="font-size:12px;font-weight:500;color:var(--muted)">(last 200)</span></div></div>' +
+          '<div class="tw"><table><thead><tr><th>Time</th><th>Lead ID</th><th>Source</th><th>Phone</th><th>Action</th><th>Result</th><th>Code</th><th>Message</th></tr></thead><tbody>' +
+          rows +
+          "</tbody></table></div></div>";
+      }
+
+      // ── SETTINGS / INTEGRATIONS ─────────────────────────────────────────────────────
+      var INTEGRATIONS_DEF = [
+        {
+          key: "nodeapi",
+          name: "🚀 Node Backend (Required)",
+          desc: "Connect to production backend server",
+          icon: "cloud",
+          iconColor: "#0051d5",
+          fields: [
+            {
+              id: "nodeUrl",
+              label: "Backend API URL",
+              type: "url",
+              settingsKey: "NODE_API_URL",
+              placeholder: "https://onex-api-xxx.onrender.com",
+            },
+          ],
+        },
+        {
+          key: "zoho",
+          name: "🔵 Zoho CRM",
+          desc: "Lead management & tracking",
+          icon: "business_center",
+          iconColor: "#0051d5",
+          fields: [
+            {
+              id: "zohoClientId",
+              label: "Zoho Client ID",
+              type: "text",
+              settingsKey: "ZOHO_CLIENT_ID",
+            },
+            {
+              id: "zohoClientSecret",
+              label: "Zoho Client Secret",
+              type: "password",
+              settingsKey: "ZOHO_CLIENT_SECRET",
+            },
+            {
+              id: "zohoDomain",
+              label: "Zoho Domain",
+              type: "select",
+              settingsKey: "ZOHO_DOMAIN",
+              options: [
+                { value: "https://accounts.zoho.in", label: "India (zoho.in)" },
+                { value: "https://accounts.zoho.com", label: "US (zoho.com)" },
+                { value: "https://accounts.zoho.eu", label: "Europe (zoho.eu)" },
+                { value: "https://accounts.zoho.com.au", label: "Australia (zoho.com.au)" },
+                { value: "https://accounts.zoho.com.cn", label: "China (zoho.com.cn)" },
+                { value: "https://accounts.zoho.jp", label: "Japan (zoho.jp)" }
+              ]
+            },
+          ],
+          hasOAuth: true,
+          oauthButtonLabel: "Connect Zoho",
+        },
+        {
+          key: "googlesheets",
+          name: "Google Sheets",
+          desc: "Lead database & storage",
+          icon: "table_view",
+          iconColor: "#16a34a",
+          fields: [],
+        },
+        {
+          key: "aisensy",
+          name: "AiSensy (WhatsApp)",
+          desc: "Automated WhatsApp messaging",
+          icon: "chat",
+          iconColor: "#16a34a",
+          fields: [
+            {
+              id: "aiKey",
+              label: "Campaign API Key (JWT)",
+              type: "password",
+              settingsKey: "aiSensyApiKey",
+            },
+            {
+              id: "aiCampaign",
+              label: "Campaign Name",
+              type: "text",
+              settingsKey: "aiSensyCampaign",
+            },
+            {
+              id: "aiPhone",
+              label: "Destination Phone (91XXXXXXXXXX)",
+              type: "tel",
+              settingsKey: "aiSensyDestinationPhone",
+            },
+            {
+              id: "aiUser",
+              label: "Sender Username",
+              type: "text",
+              settingsKey: "aiSensyUsername",
+            },
+          ],
+        },
+        {
+          key: "webhook",
+          name: "Webhook Endpoint",
+          desc: "Receives leads from all sources",
+          icon: "webhook",
+          iconColor: "#0051d5",
+          fields: [
+            {
+              id: "webhookSecret",
+              label: "Webhook Secret Token",
+              type: "password",
+              settingsKey: "webhookSecret",
+            },
+          ],
+        },
+        {
+          key: "housing",
+          name: "Housing API",
+          desc: "Housing.com lead integration",
+          icon: "home",
+          iconColor: "#0051d5",
+          fields: [
+            {
+              id: "housingApiKey",
+              label: "Housing API Key (optional)",
+              type: "password",
+              integrationKey: "housingApiKey",
+            },
+          ],
+        },
+        {
+          key: "99acres",
+          name: "99acres API",
+          desc: "99acres lead integration",
+          icon: "landscape",
+          iconColor: "#d97706",
+          fields: [
+            {
+              id: "acres99ApiKey",
+              label: "99acres API Key (optional)",
+              type: "password",
+              integrationKey: "acres99ApiKey",
+            },
+          ],
+        },
+        {
+          key: "magicbricks",
+          name: "MagicBricks API",
+          desc: "MagicBricks lead integration",
+          icon: "apartment",
+          iconColor: "#16a34a",
+          fields: [
+            {
+              id: "magicbricksApiKey",
+              label: "MagicBricks API Key (optional)",
+              type: "password",
+              integrationKey: "magicbricksApiKey",
+            },
+          ],
+        },
+        {
+          key: "meta",
+          name: "Meta Ads",
+          desc: "Facebook & Instagram Lead Ads",
+          icon: "thumb_up",
+          iconColor: "#7c3aed",
+          fields: [
+            {
+              id: "metaToken",
+              label: "Access Token",
+              type: "password",
+              integrationKey: "metaAccessToken",
+            },
+            {
+              id: "metaAdAccount",
+              label: "Ad Account ID",
+              type: "text",
+              integrationKey: "metaAdAccountId",
+            },
+          ],
+        },
+        {
+          key: "smtp",
+          name: "Email / SMTP",
+          desc: "Email notifications via Gmail",
+          icon: "mail",
+          iconColor: "#dc2626",
+          fields: [
+            {
+              id: "adminEmail",
+              label: "Admin Notification Email",
+              type: "email",
+              settingsKey: "adminEmail",
+            },
+            {
+              id: "smtpTestRecipient",
+              label: "Send Test To",
+              type: "email",
+              integrationKey: "testRecipient",
+              noSave: true,
+            },
+          ],
+        },
+        {
+          key: "telegram",
+          name: "Telegram Bot",
+          desc: "Instant alerts via Telegram",
+          icon: "send",
+          iconColor: "#0891b2",
+          fields: [
+            {
+              id: "tgToken",
+              label: "Bot Token (from @BotFather)",
+              type: "password",
+              integrationKey: "telegramBotToken",
+            },
+            {
+              id: "tgChat",
+              label: "Chat ID (from @userinfobot)",
+              type: "text",
+              integrationKey: "telegramChatId",
+            },
+          ],
+        },
+      ];
+      var settingsCache = null,
+        integrationsCache = null;
+      async function pgSettings(el) {
+        settingsCache = await callApi("getSettings");
+        integrationsCache = await callApi("getIntegrations");
+        el.innerHTML =
+          '<div class="setup-banner">' +
+          '<div class="sb-icon">🛠️</div>' +
+          "<div>" +
+          '<div class="sb-title">Quick Setup Guide — Click any card below to expand & configure</div>' +
+          '<div class="sb-steps">' +
+          "<span>Step 1</span> Click <strong>🚀 Node Backend</strong> → Paste your Render URL → Save &nbsp;" +
+          "<span>Step 2</span> Click <strong>🔵 Zoho CRM</strong> → Enter credentials → Save &nbsp;" +
+          "<span>Step 3</span> Click <strong>AiSensy</strong> → Enter API Key & Campaign → Save &nbsp;" +
+          "<span>Step 4</span> Click <strong>Telegram Bot</strong> → Enter Bot Token & Chat ID → Save" +
+          "</div>" +
+          "</div>" +
+          "</div>" +
+          '<div class="card mb12">' +
+          '<div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">extension</span>Platform Integrations</div>' +
+          '<span style="font-size:12px;color:var(--muted);font-weight:500">👇 Click any row to expand</span></div>' +
+          '<div id="intList">' +
+          INTEGRATIONS_DEF.map(intCard).join("") +
+          "</div>" +
+          "</div>" +
+          '<div class="g2">' +
+          '<div class="card">' +
+          '<div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">link</span>Webhook URLs</div></div>' +
+          '<p class="tm" style="font-size:12px;margin-bottom:10px">Generate webhook URL to paste in 99acres / Housing.com / MagicBricks dashboard.</p>' +
+          '<div class="fg"><label class="fl">Select Source</label><select id="wuSel" onchange="genWurlSettings()"><option value="housing">Housing.com</option><option value="99acres">99acres</option><option value="magicbricks">MagicBricks</option><option value="meta">Meta Lead Ads</option><option value="google">Google Ads</option></select></div>' +
+          '<div class="codeblock" id="wuDisplay">Select source above</div>' +
+          '<div style="display:flex;gap:7px;margin-top:8px"><button class="btn btn-sm" onclick="genWurlSettings()"><span class="material-symbols-outlined" style="font-size:15px">link</span>Generate</button><button class="btn btn-sm" onclick="copyEl(\'wuDisplay\')"><span class="material-symbols-outlined" style="font-size:15px">content_copy</span>Copy</button></div>' +
+          "</div>" +
+          '<div class="card">' +
+          '<div class="card-hd"><div class="card-title"><span class="material-symbols-outlined ms">build</span>Maintenance</div></div>' +
+          '<div style="display:flex;flex-direction:column;gap:7px">' +
+          '<button class="btn" onclick="initSheets()"><span class="material-symbols-outlined" style="font-size:16px">construction</span>Initialize / Repair Sheets</button>' +
+          '<button class="btn" onclick="exportCSV()"><span class="material-symbols-outlined" style="font-size:16px">download</span>Export All Leads CSV</button>' +
+          "</div>" +
+          "</div>" +
+          "</div>";
+        genWurlSettings();
+        ["nodeapi", "aisensy", "telegram"].forEach(function (k) {
+          var body = document.getElementById("body_" + k);
+          var chev = document.getElementById("chev_" + k);
+          if (body && chev) {
+            body.classList.add("open");
+            chev.classList.add("open");
+          }
+        });
+      }
+      function isConnected(intg) {
+        switch (intg.key) {
+          case "nodeapi":
+            return !!settingsCache.NODE_API_URL;
+          case "zoho":
+            return !!settingsCache.ZOHO_REFRESH_TOKEN;
+          case "googlesheets":
+            return true;
+          case "aisensy":
+            return !!settingsCache.aiSensyApiKey;
+          case "webhook":
+            return !!settingsCache.webhookSecret;
+          case "smtp":
+            return !!settingsCache.adminEmail;
+          case "telegram":
+            return !!integrationsCache.telegramBotToken;
+          case "meta":
+            return !!integrationsCache.metaAccessToken;
+          case "housing":
+            return !!integrationsCache.housingApiKey || true;
+          case "99acres":
+            return !!integrationsCache.acres99ApiKey || true;
+          case "magicbricks":
+            return !!integrationsCache.magicbricksApiKey;
+          default:
+            return false;
+        }
+      }
+      function intCard(intg, idx) {
+        var connected = isConnected(intg);
+        var fieldsHtml = intg.fields
+          .map(function (f) {
+            var val = "";
+            if (f.settingsKey) val = settingsCache[f.settingsKey] || "";
+            if (f.integrationKey)
+              val = integrationsCache[f.integrationKey] || "";
+            var placeholder = f.placeholder
+              ? 'placeholder="' + f.placeholder + '"'
+              : "";
+            
+            // Handle select fields
+            if (f.type === "select" && f.options) {
+              var optionsHtml = f.options.map(function(opt) {
+                return '<option value="' + opt.value + '"' + (val === opt.value ? ' selected' : '') + '>' + opt.label + '</option>';
+              }).join("");
+              return (
+                '<div class="fg"><label class="fl">' +
+                f.label +
+                '</label><select id="int_' +
+                intg.key +
+                "_" +
+                f.id +
+                '">' + optionsHtml + '</select></div>'
+              );
+            }
+            
+            return (
+              '<div class="fg"><label class="fl">' +
+              f.label +
+              '</label><input type="' +
+              f.type +
+              '" id="int_' +
+              intg.key +
+              "_" +
+              f.id +
+              '" value="' +
+              eh(val) +
+              '" ' +
+              placeholder +
+              "></div>"
+            );
+          })
+          .join("");
+        var needsTest =
+          [
+            "nodeapi",
+            "zoho",
+            "aisensy",
+            "telegram",
+            "smtp",
+            "meta",
+            "googlesheets",
+          ].indexOf(intg.key) !== -1;
+        return (
+          '<div class="int-card">' +
+          '<div class="int-hd" onclick="toggleIntCard(\'' +
+          intg.key +
+          "')\">" +
+          '<div class="int-icon" style="background:' +
+          intg.iconColor +
+          "18;color:" +
+          intg.iconColor +
+          '"><span class="material-symbols-outlined">' +
+          intg.icon +
+          "</span></div>" +
+          '<div><div class="int-name">' +
+          intg.name +
+          '</div><div class="int-desc">' +
+          intg.desc +
+          "</div></div>" +
+          '<div class="int-status">' +
+          '<span class="badge ' +
+          (connected ? "bsent" : "boff") +
+          '">' +
+          (connected ? "✓ CONNECTED" : "NOT SET") +
+          "</span>" +
+          '<span class="material-symbols-outlined int-chevron" id="chev_' +
+          intg.key +
+          '">expand_more</span>' +
+          "</div>" +
+          "</div>" +
+          '<div class="int-body" id="body_' +
+          intg.key +
+          '">' +
+          (intg.fields.length
+            ? '<div class="fr">' + fieldsHtml + "</div>"
+            : '<p class="tm" style="font-size:12.5px;padding-top:4px">No configuration needed — uses the Google Sheet linked to this Apps Script project.</p>') +
+          '<div style="display:flex;gap:8px;margin-top:6px">' +
+          (intg.fields.length
+            ? '<button class="btn btn-primary btn-sm" id="btn_save_' + intg.key + '" onclick="saveIntegration(\'' +
+              intg.key +
+              '\')"><span class="material-symbols-outlined" style="font-size:15px">save</span>Save</button>'
+            : "") +
+          (intg.hasOAuth
+            ? '<button class="btn btn-primary btn-sm" id="btn_oauth_' + intg.key + '" onclick="connectOAuth(\'' +
+              intg.key +
+              '\')"><span class="material-symbols-outlined" style="font-size:15px">link</span>' + (intg.oauthButtonLabel || 'Connect') + '</button>'
+            : "") +
+          (needsTest
+            ? '<button class="btn btn-amber btn-sm" id="btn_test_' + intg.key + '" onclick="testIntegrationCard(\'' +
+              intg.key +
+              '\')"><span class="material-symbols-outlined" style="font-size:15px">play_arrow</span>Test Connection</button>'
+            : "") +
+          "</div>" +
+          '<div class="int-result" id="res_' +
+          intg.key +
+          '"></div>' +
+          "</div>" +
+          "</div>"
+        );
+      }
+      function toggleIntCard(key) {
+        var body = document.getElementById("body_" + key),
+          chev = document.getElementById("chev_" + key);
+        body.classList.toggle("open");
+        chev.classList.toggle("open");
+      }
+      async function saveIntegration(key) {
+        var intg = INTEGRATIONS_DEF.find(function (i) {
+          return i.key === key;
+        });
+        if (!intg) return;
+        
+        var saveBtn = document.getElementById("btn_save_" + key);
+        var testBtn = document.getElementById("btn_test_" + key);
+        
+        // Disable buttons and show loading state
+        if (saveBtn) {
+          saveBtn.disabled = true;
+          saveBtn.innerHTML = '<span class="material-symbols-outlined spin-icon" style="font-size:15px">refresh</span>Saving…';
+        }
+        if (testBtn) testBtn.disabled = true;
+        
+        var settingsUpdate = {},
+          integrationsUpdate = {};
+        intg.fields.forEach(function (f) {
+          if (f.noSave) return;
+          var v = document.getElementById("int_" + key + "_" + f.id).value;
+          if (f.settingsKey) {
+            if (v !== undefined && !v.startsWith("***")) settingsUpdate[f.settingsKey] = v;
+          }
+          if (f.integrationKey) {
+            if (v !== undefined && !v.startsWith("***"))
+              integrationsUpdate[f.integrationKey] = v;
+          }
+        });
+        try {
+          if (Object.keys(settingsUpdate).length)
+            await callApi("saveSettings", { settings: settingsUpdate });
+          if (Object.keys(integrationsUpdate).length)
+            await callApi("saveIntegrations", {
+              integrations: integrationsUpdate,
+            });
+          toast(intg.name + " saved!", "success");
+          settingsCache = await callApi("getSettings");
+          integrationsCache = await callApi("getIntegrations");
+          refreshIntCard(key);
+        } catch (e) {
+          toast("Save failed: " + e.message, "error");
+        } finally {
+          // Re-enable buttons
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:15px">save</span>Save';
+          }
+          if (testBtn) testBtn.disabled = false;
+        }
+      }
+      function refreshIntCard(key) {
+        var idx = INTEGRATIONS_DEF.findIndex(function (i) {
+          return i.key === key;
+        });
+        var wrap = document.getElementById("intList");
+        var temp = document.createElement("div");
+        temp.innerHTML = INTEGRATIONS_DEF.map(intCard).join("");
+        wrap.innerHTML = temp.innerHTML;
+        // re-open the one being edited
+        toggleIntCard(key);
+      }
+      function connectOAuth(key) {
+        var intg = INTEGRATIONS_DEF.find(function (i) {
+          return i.key === key;
+        });
+        if (!intg) return;
+        
+        var nodeUrl = settingsCache.NODE_API_URL;
+        if (!nodeUrl) {
+          toast("Please configure Node Backend URL first", "error");
+          return;
+        }
+        
+        // Open OAuth window
+        var oauthUrl = nodeUrl + '/api/zoho/auth';
+        window.open(oauthUrl, 'zoho_oauth', 'width=600,height=700,scrollbars=yes,resizable=yes');
+        
+        toast("Opening Zoho OAuth window...", "info");
+      }
+      async function testIntegrationCard(key) {
+        var intg = INTEGRATIONS_DEF.find(function (i) {
+          return i.key === key;
+        });
+        
+        var saveBtn = document.getElementById("btn_save_" + key);
+        var testBtn = document.getElementById("btn_test_" + key);
+        var res = document.getElementById("res_" + key);
+        
+        // Disable buttons and show loading state
+        if (saveBtn) saveBtn.disabled = true;
+        if (testBtn) {
+          testBtn.disabled = true;
+          testBtn.innerHTML = '<span class="material-symbols-outlined spin-icon" style="font-size:15px">progress_activity</span>Testing…';
+        }
+        
+        res.style.display = "block";
+        res.style.background = "var(--surface2)";
+        res.style.color = "var(--text)";
+        res.textContent = "Testing…";
+        
+        var data = {};
+        intg.fields.forEach(function (f) {
+          var v = document.getElementById("int_" + key + "_" + f.id).value;
+          if (v && !v.startsWith("***")) {
+            if (f.id === "nodeUrl") data.nodeUrl = v;
+            if (f.id === "zohoClientId") data.clientId = v;
+            if (f.id === "zohoClientSecret") data.clientSecret = v;
+            if (f.id === "zohoRefreshToken") data.refreshToken = v;
+            if (f.id === "zohoDomain") data.tokenUrl = v + '/oauth/v2/token';
+            if (f.id === "aiKey") data.apiKey = v;
+            if (f.id === "aiCampaign") data.campaign = v;
+            if (f.id === "aiPhone") data.phone = v;
+            if (f.id === "aiUser") data.userName = v;
+            if (f.id === "tgToken") data.botToken = v;
+            if (f.id === "tgChat") data.chatId = v;
+            if (f.id === "metaToken") data.accessToken = v;
+            if (f.id === "smtpTestRecipient") data.testRecipient = v;
+            if (f.id === "adminEmail" && !data.testRecipient)
+              data.testRecipient = v;
+          }
+        });
+        
+        try {
+          var r;
+          if (key === "aisensy") {
+            r = await callApi("testAiSensy", {
+              name: "Test User",
+              phone: data.phone || "9999999999",
+              data: data
+            });
+          } else if (key === "nodeapi") {
+            r = await callApi("testNodeBackendConnection", { data: data });
+          } else {
+            r = await callApi("testIntegration", { platform: key, data: data });
+          }
+          res.style.background = r.success
+            ? "var(--green-bg)"
+            : "var(--red-bg)";
+          res.style.color = r.success ? "var(--green)" : "var(--red)";
+          res.textContent =
+            (r.success ? "✅ " : "❌ ") +
+            (r.message || (r.success ? "Success" : "Failed"));
+          toast(
+            r.success ? intg.name + " test passed!" : "Test failed",
+            r.success ? "success" : "error",
+          );
+        } catch (e) {
+          res.style.background = "var(--red-bg)";
+          res.style.color = "var(--red)";
+          res.textContent = "❌ " + e.message;
+          toast("Test error: " + e.message, "error");
+        } finally {
+          // Re-enable buttons
+          if (saveBtn) saveBtn.disabled = false;
+          if (testBtn) {
+            testBtn.disabled = false;
+            testBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:15px">play_arrow</span>Test Connection';
+          }
+        }
+      }
+      async function genWurlSettings() {
+        var sel = document.getElementById("wuSel"),
+          el = document.getElementById("wuDisplay");
+        if (!sel || !el) return;
+        try {
+          var r = await callApi("generateWebhookUrl", { sourceKey: sel.value });
+          el.textContent = r.url;
+        } catch (e) {
+          el.textContent = "Deploy as Web App to see URL";
+        }
+      }
+      async function initSheets() {
+        try {
+          var r = await callApi("initializeSheets");
+          toast(r.message, "success");
+        } catch (e) {
+          toast("Error: " + e.message, "error");
+        }
+      }
+
+      // ── HELPERS ───────────────────────────────────────────────────────────────────
+      function eh(s) {
+        if (s === undefined || s === null) return "";
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+      function ej(s) {
+        if (s === undefined || s === null) return "";
+        return String(s)
+          .replace(/\\/g, "\\\\")
+          .replace(/'/g, "\\'")
+          .replace(/"/g, '\\"');
+      }
+      function fmtPh(p) {
+        if (!p) return "—";
+        var d = String(p).replace(/\D/g, "");
+        if (d.length === 12 && d.slice(0, 2) === "91")
+          return "+" + d.slice(0, 2) + " " + d.slice(2, 7) + " " + d.slice(7);
+        return String(p);
+      }
+      function ago(ts) {
+        if (!ts) return "—";
+        var d = new Date(ts);
+        if (isNaN(d.getTime())) return String(ts);
+        var diff = (Date.now() - d.getTime()) / 1000;
+        if (diff < 60) return "just now";
+        if (diff < 3600) return Math.floor(diff / 60) + "m ago";
+        if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
+        return d.toLocaleDateString("en-IN", {
+          day: "numeric",
+          month: "short",
+        });
+      }
+      function fmtDate(ts) {
+        if (!ts) return "—";
+        var d = new Date(ts);
+        if (isNaN(d.getTime())) return String(ts);
+        return d.toLocaleString("en-IN", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+      function srcBadge(src) {
+        var s = String(src || "").toLowerCase();
+        var cls =
+          s === "housing" || s.indexOf("housing") !== -1
+            ? "bh"
+            : s.indexOf("99acres") !== -1
+              ? "b9"
+              : "bdyn";
+        return (
+          '<span class="badge ' + cls + '">' + eh(src || "Unknown") + "</span>"
+        );
+      }
+      function stBadge(st) {
+        var m = STATUS_META[st];
+        return (
+          '<span class="badge ' +
+          (m ? m.badge : "bnew") +
+          '">' +
+          eh(st || "New") +
+          "</span>"
+        );
+      }
+      function waBadge(s) {
+        var c = String(s || "").toLowerCase();
+        var cls =
+          c === "sent"
+            ? "bsent"
+            : c === "failed"
+              ? "bfail"
+              : c === "pending"
+                ? "bpend"
+                : "boff";
+        return '<span class="badge ' + cls + '">' + eh(s || "—") + "</span>";
+      }
+      function om(id) {
+        document.getElementById(id).classList.add("open");
+      }
+      function cm(id) {
+        document.getElementById(id).classList.remove("open");
+        if (id === "mTestWa") {
+          var r = document.getElementById("twRes");
+          if (r) r.style.display = "none";
+          var b = document.getElementById("btnTw");
+          if (b) {
+            b.disabled = false;
+            b.innerHTML =
+              '<span class="material-symbols-outlined" style="font-size:16px">send</span>Send Test';
+          }
+        }
+      }
+      function copyEl(id) {
+        var e = document.getElementById(id);
+        if (!e) return;
+        navigator.clipboard
+          .writeText(e.textContent.trim())
+          .then(function () {
+            toast("Copied!", "success");
+          })
+          .catch(function () {
+            toast("Copy failed", "warning");
+          });
+      }
+      function toast(msg, type) {
+        type = type || "info";
+        var c = document.getElementById("tc"),
+          el = document.createElement("div");
+        el.className = "toast " + type;
+        var icons = {
+          success: "check_circle",
+          error: "error",
+          warning: "warning",
+          info: "info",
+        };
+        el.innerHTML =
+          '<span class="material-symbols-outlined" style="font-size:18px">' +
+          (icons[type] || "info") +
+          "</span><span>" +
+          eh(msg) +
+          "</span>";
+        c.appendChild(el);
+        setTimeout(function () {
+          el.style.opacity = "0";
+          el.style.transform = "translateX(14px)";
+          el.style.transition = ".22s";
+          setTimeout(function () {
+            el.parentNode && el.parentNode.removeChild(el);
+          }, 220);
+        }, 3500);
+      }
+
+      // ── INIT ──────────────────────────────────────────────────────────────────────
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".mo").forEach(function (o) {
+          o.addEventListener("click", function (e) {
+            if (e.target === o) o.classList.remove("open");
+          });
+        });
+        callApi("getBranding")
+          .then(function (b) {
+            if (b.companyName) {
+              document.getElementById("lgName").textContent = b.companyName;
+              document.title = b.companyName + " CRM";
+            }
+            if (b.companyTagline)
+              document.getElementById("lgSub").textContent = b.companyTagline;
+            if (b.logoEmoji)
+              document.getElementById("lgEmoji").textContent = b.logoEmoji;
+            if (b.accentColor)
+              document.documentElement.style.setProperty(
+                "--primary",
+                b.accentColor,
+              );
+          })
+          .catch(function () {});
+        nav("dashboard");
+      });
+    </script>
+  </body>
+</html>

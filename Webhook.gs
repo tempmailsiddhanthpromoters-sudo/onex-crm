@@ -63,17 +63,34 @@ function handleWebhook(e, payload) {
     return buildResponse(500, false, 'Failed to save lead to sheet', null);
   }
 
-  // 9. WHATSAPP
-  var waStatus  = 'DISABLED';
-  var waMessage = 'WhatsApp disabled';
+  // 9. WHATSAPP (GAS-side)
+  var waStatus  = 'PENDING';
+  var waMessage = '';
   var waResult  = null;
 
-  if (cfg.whatsappEnabled) {
+  // 10. SYNC TO NODE BACKEND (Zoho + Telegram + AISensy fallback)
+  var nodeSyncOk = false;
+  if (cfg.nodeApiUrl && cfg.nodeApiUrl.trim()) {
+    try {
+      var syncResult = NodeAPI.pushLead(normalized);
+      nodeSyncOk = syncResult.success;
+      if (nodeSyncOk) {
+        waStatus = 'SYNCED';
+        waMessage = 'Synced to Node backend';
+        AppLogger.write(leadId, source, normalized.phone, 'Node Sync', 'SUCCESS', '', 'Lead pushed to ' + cfg.nodeApiUrl);
+      }
+    } catch (nodeErr) {
+      console.error('Node sync failed: ' + nodeErr.toString());
+      AppLogger.write(leadId, source, normalized.phone, 'Node Sync', 'FAILED', '', nodeErr.toString());
+    }
+  }
+
+  // 11. FALLBACK WHATSAPP (only if Node sync failed or is disabled)
+  if (!nodeSyncOk && cfg.whatsappEnabled) {
     if (!cfg.aiSensyApiKey || !cfg.aiSensyApiKey.trim()) {
       waStatus  = 'SKIPPED';
-      waMessage = 'AiSensy API key not configured in Script Properties';
+      waMessage = 'AiSensy API key not configured';
     } else {
-      // Use source-specific campaign override if set
       var srcCampaign = srcConfig && srcConfig.campaignOverride ? srcConfig.campaignOverride : '';
       var cfgWithSrcCampaign = Object.assign({}, cfg);
       if (srcCampaign) cfgWithSrcCampaign.aiSensyCampaign = srcCampaign;
@@ -82,7 +99,7 @@ function handleWebhook(e, payload) {
       waStatus  = waResult.success ? 'SENT' : 'FAILED';
       waMessage = waResult.message || '';
       AppLogger.write(leadId, source, normalized.phone,
-        'AiSensy ' + (waResult.success ? 'Sent' : 'Failed'),
+        'AiSensy (GAS) ' + (waResult.success ? 'Sent' : 'Failed'),
         waResult.success ? 'SUCCESS' : 'FAILED',
         waResult.responseCode || '', waMessage);
       if (!waResult.success) {
@@ -90,12 +107,12 @@ function handleWebhook(e, payload) {
       }
     }
   }
-  updateLeadWaStatus(leadId, waStatus, waStatus === 'FAILED' ? waMessage : '');
+  updateLeadWaStatus(leadId, waStatus, (waStatus === 'FAILED' || !nodeSyncOk) ? waMessage : '');
 
-  // 10. ROUTING RULES
+  // 12. ROUTING RULES
   applyRoutingRules(leadId, normalized);
 
-  // 11. EMAIL NOTIFICATION
+  // 13. EMAIL NOTIFICATION
   if (cfg.notificationsEnabled && cfg.emailAlerts && cfg.adminEmail && cfg.adminEmail.trim()) {
     try { sendNewLeadNotification(normalized, cfg); } catch(mailErr) {
       console.error('Email notification failed: ' + mailErr.toString());

@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>OneX CRM - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f7f9fb",
+                        "on-primary-fixed": "#131b2e",
+                        "on-tertiary-fixed": "#2a1700",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#45464d",
+                        "surface-container-highest": "#e0e3e5",
+                        "surface-tint": "#565e74",
+                        "surface-dim": "#d8dadc",
+                        "primary-fixed-dim": "#bec6e0",
+                        "on-secondary-fixed-variant": "#003ea8",
+                        "tertiary-container": "#2a1700",
+                        "on-background": "#191c1e",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "secondary": "#0051d5",
+                        "primary-fixed": "#dae2fd",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#316bf3",
+                        "secondary-fixed": "#dbe1ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#f7f9fb",
+                        "error": "#ba1a1a",
+                        "on-surface": "#191c1e",
+                        "on-secondary-fixed": "#00174b",
+                        "on-primary-container": "#7c839b",
+                        "on-error": "#ffffff",
+                        "background": "#f7f9fb",
+                        "on-tertiary-container": "#b87500",
+                        "primary": "#000000",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed-dim": "#b4c5ff",
+                        "primary-container": "#131b2e",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "inverse-surface": "#2d3133",
+                        "surface-container-high": "#e6e8ea",
+                        "outline-variant": "#c6c6cd",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f2f4f6",
+                        "on-secondary-container": "#fefcff",
+                        "outline": "#76777d",
+                        "surface-container": "#eceef0",
+                        "inverse-primary": "#bec6e0",
+                        "surface-variant": "#e0e3e5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "16px",
+                        "xs": "8px",
+                        "gutter": "24px",
+                        "md": "24px",
+                        "base": "4px",
+                        "lg": "32px",
+                        "xl": "48px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-header {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.7);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .kpi-card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .kpi-card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e0e3e5;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #c6c6cd;
+        }
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .alert-success {
+            background: #dcfce7;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+        .alert-error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+        .alert-warning {
+            background: #fef3c7;
+            border: 1px solid #fde68a;
+            color: #92400e;
+        }
+        .alert-info {
+            background: #dbeafe;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface overflow-hidden">
+    <div class="flex h-screen w-full">
+        <!-- Sidebar Navigation -->
+        <aside class="w-[260px] h-screen sticky left-0 top-0 bg-primary-container border-r border-outline-variant flex flex-col py-md shadow-sm z-50 overflow-y-auto sidebar-scroll">
+            <div class="px-gutter mb-lg">
+                <h1 class="font-headline-md text-headline-md font-bold text-on-primary">OneX CRM</h1>
+                <p class="text-label-md font-label-md text-on-primary-container/60 uppercase tracking-widest mt-1">Admin Panel</p>
+            </div>
+            
+            <div class="flex items-center gap-3 px-gutter mb-lg">
+                <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center border-2 border-secondary overflow-hidden">
+                    <span class="material-symbols-outlined text-on-secondary">person</span>
+                </div>
+                <div>
+                    <p class="font-label-md text-label-md text-on-primary">Admin User</p>
+                    <p class="text-[10px] text-on-primary-container/60 tracking-wider">SYSTEM ADMIN</p>
+                </div>
+            </div>
+            
+            <nav class="flex-1 space-y-1 px-2">
+                <!-- Main Section -->
+                <div class="pt-lg pb-xs px-2">
+                    <p class="text-[10px] font-bold text-on-primary-container/40 uppercase tracking-[2px]">Main</p>
+                </div>
+                <div class="flex items-center gap-3 bg-secondary/10 text-secondary border-l-4 border-secondary px-4 py-3 cursor-pointer active:scale-95 duration-150 nav-item active" data-screen="dashboard">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                    <span class="font-label-md text-label-md">Dashboard</span>
+                </div>
+                <div class="flex items-center gap-3 text-on-primary-container/70 px-4 py-3 hover:bg-secondary/5 hover:text-secondary transition-colors cursor-pointer active:scale-95 duration-150 nav-item" data-screen="leads">
+                    <span class="material-symbols-outlined">person_search</span>
+                    <span class="font-label-md text-label-md">Leads</span>
+                </div>
+                
+                <!-- Integrations Section -->
+                <div class="pt-lg pb-xs px-2">
+                    <p class="text-[10px] font-bold text-on-primary-container/40 uppercase tracking-[2px]">Integrations</p>
+                </div>
+                <div class="flex items-center gap-3 text-on-primary-container/70 px-4 py-3 hover:bg-secondary/5 hover:text-secondary transition-colors cursor-pointer active:scale-95 duration-150 nav-item" data-screen="integrations">
+                    <span class="material-symbols-outlined">hub</span>
+                    <span class="font-label-md text-label-md">Integrations</span>
+                </div>
+                <div class="flex items-center gap-3 text-on-primary-container/70 px-4 py-3 hover:bg-secondary/5 hover:text-secondary transition-colors cursor-pointer active:scale-95 duration-150 nav-item" data-screen="field-mapping">
+                    <span class="material-symbols-outlined">swap_horiz</span>
+                    <span class="font-label-md text-label-md">Field Mapping</span>
+                </div>
+                <div class="flex items-center gap-3 text-on-primary-container/70 px-4 py-3 hover:bg-secondary/5 hover:text-secondary transition-colors cursor-pointer active:scale-95 duration-150 nav-item" data-screen="routing-rules">
+                    <span class="material-symbols-outlined">route</span>
+                    <span class="font-label-md text-label-md">Routing Rules</span>
+                </div>
+                <div class="flex items-center gap-3 text-on-primary-container/70 px-4 py-3 hover:bg-secondary/5 hover:text-secondary transition-colors cursor-pointer active:scale-95 duration-150 nav-item" data-screen="zoho">
+                    <span class="material-symbols-outlined">description</span>
+                    <span class="font-label-md text-label-md">Zoho</span>
+                </div>
+                <div class="flex items-center gap-3 text-on-primary-container/70 px-4 py-3 hover:bg-secondary/5 hover:text-secondary transition-colors cursor-pointer active:scale-95 duration-150 nav-item" data-screen="aisensy">
+                    <span class="material-symbols-outlined">chat</span>
+                    <span class="font-label-md text-label-md">AiSensy</span>
+                </div>
+                <div class="flex items-center gap-3 text-on-primary-container/70 px-4 py-3 hover:bg-secondary/5 hover:text-secondary transition-colors cursor-pointer active:scale-95 duration-150 nav-item" data-screen="telegram">
+                    <span class="material-symbols-outlined">send</span>
+                    <span class="font-label-md text-label-md">Telegram</span>
+                </div>
+                
+                <!-- Management Section -->
+                <div class="pt-lg pb-xs px-2">
+                    <p class="text-[10px] font-bold text-on-primary-container/40 uppercase tracking-[2px]">Management</p>
+                </div>
+                <div class="flex items-center gap-3 text-on-primary-container/70 px-4 py-3 hover:bg-secondary/5 hover:text-secondary transition-colors cursor-pointer active:scale-95 duration-150 nav-item" data-screen="users">
+                    <span class="material-symbols-outlined">group</span>
+                    <span class="font-label-md text-label-md">Users</span>
+                </div>
+                <div class="flex items-center gap-3 text-on-primary-container/70 px-4 py-3 hover:bg-secondary/5 hover:text-secondary transition-colors cursor-pointer active:scale-95 duration-150 nav-item" data-screen="settings">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span class="font-label-md text-label-md">Settings</span>
+                </div>
+                <div class="flex items-center gap-3 text-on-primary-container/70 px-4 py-3 hover:bg-secondary/5 hover:text-secondary transition-colors cursor-pointer active:scale-95 duration-150 nav-item" data-screen="audit-logs">
+                    <span class="material-symbols-outlined">history</span>
+                    <span class="font-label-md text-label-md">Audit Logs</span>
+                </div>
+                <div class="flex items-center gap-3 text-on-primary-container/70 px-4 py-3 hover:bg-secondary/5 hover:text-secondary transition-colors cursor-pointer active:scale-95 duration-150 nav-item" data-screen="sync-monitor">
+                    <span class="material-symbols-outlined">sync</span>
+                    <span class="font-label-md text-label-md">Sync Monitor</span>
+                </div>
+                <div class="flex items-center gap-3 text-on-primary-container/70 px-4 py-3 hover:bg-secondary/5 hover:text-secondary transition-colors cursor-pointer active:scale-95 duration-150 nav-item" data-screen="system-health">
+                    <span class="material-symbols-outlined">health_and_safety</span>
+                    <span class="font-label-md text-label-md">System Health</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col min-w-0 bg-surface overflow-hidden">
+            <!-- Top Navigation Bar -->
+            <header class="h-16 sticky top-0 z-50 glass-header border-b border-outline-variant/30 flex justify-between items-center px-gutter w-full shadow-sm">
+                <div class="flex items-center gap-xs">
+                    <span class="text-on-surface-variant font-medium">CRM</span>
+                    <span class="material-symbols-outlined text-on-surface-variant text-sm">chevron_right</span>
+                    <span class="text-primary font-bold font-headline-md text-headline-md" id="headerTitle">Dashboard</span>
+                </div>
+                <div class="flex items-center gap-gutter">
+                    <!-- Search Bar -->
+                    <div class="relative w-72 group hidden lg:block">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant transition-colors group-focus-within:text-secondary">search</span>
+                        <input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" placeholder="Search..." type="text"/>
+                    </div>
+                    <div class="flex items-center gap-sm">
+                        <div class="relative cursor-pointer hover:bg-surface-container-high p-2 rounded-full transition-colors">
+                            <span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+                            <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+                        </div>
+                        <div class="cursor-pointer hover:bg-surface-container-high p-2 rounded-full transition-colors">
+                            <span class="material-symbols-outlined text-on-surface-variant">help</span>
+                        </div>
+                        <button class="flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-full hover:bg-surface-container-high transition-colors" id="refreshBtn">
+                            <span class="material-symbols-outlined text-sm">refresh</span>
+                            <span class="text-sm font-medium">Refresh</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="flex-1 overflow-y-auto p-gutter custom-scrollbar">
+                <!-- Alert Container -->
+                <div id="alertContainer"></div>
+
+                <!-- Dashboard Screen -->
+                <div class="screen active" id="screen-dashboard">
+                    <!-- Welcome Section -->
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+                        <div>
+                            <h2 class="font-headline-lg text-headline-lg text-primary mb-1">Dashboard Overview</h2>
+                            <p class="text-on-surface-variant font-body-md">Welcome back! Here's your CRM performance summary.</p>
+                        </div>
+                        <div class="flex gap-sm">
+                            <button class="px-md py-sm rounded-xl border border-outline-variant bg-white font-label-md text-secondary hover:bg-surface-container transition-all flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]">download</span>
+                                Export Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- KPI Bento Grid -->
+                    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md mb-lg">
+                        <!-- Today's Leads -->
+                        <div class="bg-white p-md rounded-xl border border-outline-variant kpi-card-hover flex flex-col justify-between">
+                            <div class="flex justify-between items-start mb-base">
+                                <span class="p-2 rounded-lg bg-secondary/10 text-secondary material-symbols-outlined">group_add</span>
+                                <span class="text-xs font-bold text-success bg-green-50 px-2 py-1 rounded-full" id="statTodayLeadsBadge">+0%</span>
+                            </div>
+                            <div>
+                                <p class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">Today's Leads</p>
+                                <h3 class="font-display-lg text-[32px] font-bold text-primary" id="statTodayLeads">-</h3>
+                            </div>
+                        </div>
+                        <!-- Total Leads -->
+                        <div class="bg-white p-md rounded-xl border border-outline-variant kpi-card-hover flex flex-col justify-between">
+                            <div class="flex justify-between items-start mb-base">
+                                <span class="p-2 rounded-lg bg-primary-container/10 text-primary-container material-symbols-outlined">database</span>
+                                <span class="text-xs font-bold text-on-surface-variant bg-surface-container px-2 py-1 rounded-full">Overall</span>
+                            </div>
+                            <div>
+                                <p class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">Total Leads</p>
+                                <h3 class="font-display-lg text-[32px] font-bold text-primary" id="statTotalLeads">-</h3>
+                            </div>
+                        </div>
+                        <!-- This Week -->
+                        <div class="bg-white p-md rounded-xl border border-outline-variant kpi-card-hover flex flex-col justify-between">
+                            <div class="flex justify-between items-start mb-base">
+                                <span class="p-2 rounded-lg bg-orange-100 text-orange-600 material-symbols-outlined">calendar_week</span>
+                                <span class="text-xs font-bold text-on-surface-variant bg-surface-container px-2 py-1 rounded-full">Weekly</span>
+                            </div>
+                            <div>
+                                <p class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">This Week</p>
+                                <h3 class="font-display-lg text-[32px] font-bold text-primary" id="statWeekLeads">-</h3>
+                            </div>
+                        </div>
+                        <!-- This Month -->
+                        <div class="bg-white p-md rounded-xl border border-outline-variant kpi-card-hover flex flex-col justify-between">
+                            <div class="flex justify-between items-start mb-base">
+                                <span class="p-2 rounded-lg bg-blue-100 text-blue-600 material-symbols-outlined">calendar_month</span>
+                                <span class="text-xs font-bold text-on-surface-variant bg-surface-container px-2 py-1 rounded-full">Monthly</span>
+                            </div>
+                            <div>
+                                <p class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">This Month</p>
+                                <h3 class="font-display-lg text-[32px] font-bold text-primary" id="statMonthLeads">-</h3>
+                            </div>
+                        </div>
+                        <!-- Row 2 -->
+                        <div class="bg-white p-md rounded-xl border border-outline-variant kpi-card-hover">
+                            <div class="flex justify-between items-center mb-md">
+                                <p class="text-label-md text-on-surface-variant uppercase tracking-wider">WhatsApp Status</p>
+                                <span class="material-symbols-outlined text-secondary">chat</span>
+                            </div>
+                            <div class="space-y-sm">
+                                <div class="flex justify-between items-end">
+                                    <p class="text-body-sm text-on-surface-variant">WhatsApp Sent</p>
+                                    <p class="font-bold text-headline-md" id="statWASent">-</p>
+                                </div>
+                                <div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+                                    <div class="bg-secondary h-full" id="waProgress" style="width: 0%"></div>
+                                </div>
+                                <div class="flex justify-between items-end pt-xs">
+                                    <p class="text-body-sm text-error">WhatsApp Failed</p>
+                                    <p class="font-bold text-body-md text-error" id="statWAFailed">-</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-md rounded-xl border border-outline-variant kpi-card-hover flex flex-col justify-center">
+                            <p class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">Conversion Rate</p>
+                            <h3 class="font-display-lg text-[32px] font-bold text-primary" id="statConversion">-</h3>
+                            <p class="text-xs text-on-surface-variant mt-2">Lead to booking ratio</p>
+                        </div>
+                        <div class="bg-secondary p-md rounded-xl shadow-xl shadow-secondary/10 flex flex-col justify-center text-on-secondary">
+                            <p class="text-label-md opacity-80 uppercase tracking-wider mb-xs">Revenue</p>
+                            <h3 class="font-display-lg text-[32px] font-bold" id="statRevenue">-</h3>
+                            <div class="flex items-center gap-1 mt-2">
+                                <span class="material-symbols-outlined text-sm">trending_up</span>
+                                <span class="text-xs font-medium">Total bookings value</span>
+                            </div>
+                        </div>
+                        <div class="bg-white p-md rounded-xl border border-outline-variant kpi-card-hover flex flex-col justify-between">
+                            <div class="flex justify-between items-start mb-base">
+                                <span class="p-2 rounded-lg bg-primary/5 text-primary material-symbols-outlined">event_available</span>
+                                <span class="text-xs font-bold text-on-surface-variant bg-surface-container px-2 py-1 rounded-full">Active</span>
+                            </div>
+                            <div>
+                                <p class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">Site Visits</p>
+                                <h3 class="font-display-lg text-[32px] font-bold text-primary" id="statSiteVisits">-</h3>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Recent Leads Table -->
+                    <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm mb-lg">
+                        <header class="glass-header px-gutter py-md border-b border-outline-variant/30 flex justify-between items-center">
+                            <h4 class="font-headline-md text-body-lg font-bold">Recent Leads</h4>
+                            <button class="text-secondary text-sm font-medium hover:underline">View All</button>
+                        </header>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-surface-container-low/50 text-label-md uppercase tracking-wider text-on-surface-variant">
+                                    <tr>
+                                        <th class="px-lg py-md">Lead ID</th>
+                                        <th class="px-lg py-md">Name</th>
+                                        <th class="px-lg py-md">Phone</th>
+                                        <th class="px-lg py-md">Source</th>
+                                        <th class="px-lg py-md">Status</th>
+                                        <th class="px-lg py-md">Assigned To</th>
+                                        <th class="px-lg py-md">Created</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/30" id="recentLeadsBody">
+                                    <tr><td colspan="7" class="px-lg py-md text-center text-on-surface-variant">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Top Sources & Agents -->
+                    <section class="grid grid-cols-1 lg:grid-cols-2 gap-md">
+                        <div class="bg-white rounded-xl border border-outline-variant overflow-hidden">
+                            <header class="glass-header px-gutter py-md border-b border-outline-variant/30">
+                                <h4 class="font-headline-md text-body-lg font-bold">Top Performing Sources</h4>
+                            </header>
+                            <div class="p-lg" id="topSources">
+                                <p class="text-on-surface-variant text-center py-8">Loading...</p>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-outline-variant overflow-hidden">
+                            <header class="glass-header px-gutter py-md border-b border-outline-variant/30">
+                                <h4 class="font-headline-md text-body-lg font-bold">Top Performing Agents</h4>
+                            </header>
+                            <div class="p-lg" id="topAgents">
+                                <p class="text-on-surface-variant text-center py-8">Loading...</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Leads Screen -->
+                <div class="screen" id="screen-leads">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+                        <div>
+                            <h2 class="font-headline-lg text-headline-lg text-primary mb-1">Lead Management</h2>
+                            <p class="text-on-surface-variant font-body-md">Manage and track all your leads in one place.</p>
+                        </div>
+                        <div class="flex gap-sm">
+                            <button class="px-md py-sm rounded-xl border border-outline-variant bg-white font-label-md text-secondary hover:bg-surface-container transition-all flex items-center gap-2" id="bulkUpdateBtn">
+                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                                Bulk Update
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Bar -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-lg">
+                        <div class="bg-surface-container-lowest p-gutter rounded-xl shadow-sm border border-outline-variant/30 flex items-center justify-between group hover:shadow-md transition-shadow">
+                            <div>
+                                <p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Total Leads</p>
+                                <h3 class="text-headline-lg font-headline-lg mt-1" id="leadsTotal">-</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+                                <span class="material-symbols-outlined">groups</span>
+                            </div>
+                        </div>
+                        <div class="bg-surface-container-lowest p-gutter rounded-xl shadow-sm border border-outline-variant/30 flex items-center justify-between group hover:shadow-md transition-shadow">
+                            <div>
+                                <p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Page</p>
+                                <h3 class="text-headline-lg font-headline-lg mt-1" id="leadsPage">1</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg bg-tertiary-fixed/30 flex items-center justify-center text-on-tertiary-container">
+                                <span class="material-symbols-outlined">page</span>
+                            </div>
+                        </div>
+                        <div class="bg-surface-container-lowest p-gutter rounded-xl shadow-sm border border-outline-variant/30 flex items-center justify-between group hover:shadow-md transition-shadow">
+                            <div>
+                                <p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Selected</p>
+                                <h3 class="text-headline-lg font-headline-lg mt-1" id="leadsSelected">0</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center text-green-700">
+                                <span class="material-symbols-outlined">check_circle</span>
+                            </div>
+                        </div>
+                        <div class="bg-surface-container-lowest p-gutter rounded-xl shadow-sm border border-outline-variant/30 flex items-center justify-between group hover:shadow-md transition-shadow">
+                            <div>
+                                <p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Filtered</p>
+                                <h3 class="text-headline-lg font-headline-lg mt-1" id="leadsFiltered">-</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary-container">
+                                <span class="material-symbols-outlined">filter_list</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden mb-lg">
+                        <div class="p-gutter">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-md">
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Search</label>
+                                    <input type="text" class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="leadSearch" placeholder="Search leads...">
+                                </div>
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Source</label>
+                                    <select class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="leadSourceFilter">
+                                        <option value="">All Sources</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Status</label>
+                                    <select class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="leadStatusFilter">
+                                        <option value="">All Statuses</option>
+                                        <option value="New">New</option>
+                                        <option value="Contacted">Contacted</option>
+                                        <option value="Qualified">Qualified</option>
+                                        <option value="Booked">Booked</option>
+                                        <option value="Lost">Lost</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Assigned To</label>
+                                    <select class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="leadAssignedFilter">
+                                        <option value="">All Agents</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Leads Table -->
+                    <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-surface-container-low/50 text-label-md uppercase tracking-wider text-on-surface-variant">
+                                    <tr>
+                                        <th class="px-lg py-md"><input type="checkbox" id="selectAllLeads" class="w-4 h-4 rounded border-outline-variant"></th>
+                                        <th class="px-lg py-md">Lead ID</th>
+                                        <th class="px-lg py-md">Name</th>
+                                        <th class="px-lg py-md">Phone</th>
+                                        <th class="px-lg py-md">Email</th>
+                                        <th class="px-lg py-md">Source</th>
+                                        <th class="px-lg py-md">Status</th>
+                                        <th class="px-lg py-md">Assigned To</th>
+                                        <th class="px-lg py-md">WA Status</th>
+                                        <th class="px-lg py-md">Created</th>
+                                        <th class="px-lg py-md">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/30" id="leadsBody">
+                                    <tr><td colspan="11" class="px-lg py-md text-center text-on-surface-variant">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-gutter border-t border-outline-variant/30 flex justify-between items-center">
+                            <p class="text-sm text-on-surface-variant" id="leadsPaginationInfo">Showing 0 of 0 leads</p>
+                            <div class="flex gap-sm" id="leadsPagination"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Integrations Screen -->
+                <div class="screen" id="screen-integrations">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+                        <div>
+                            <h2 class="font-headline-lg text-headline-lg text-primary mb-1">Dynamic Integration Builder</h2>
+                            <p class="text-on-surface-variant font-body-md">Configure and manage your third-party integrations.</p>
+                        </div>
+                        <div class="flex gap-sm">
+                            <button class="px-md py-sm rounded-xl bg-secondary text-on-secondary font-label-md shadow-lg shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2" id="createIntegrationBtn">
+                                <span class="material-symbols-outlined text-[18px]">add</span>
+                                New Integration
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm mb-lg">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-surface-container-low/50 text-label-md uppercase tracking-wider text-on-surface-variant">
+                                    <tr>
+                                        <th class="px-lg py-md">Name</th>
+                                        <th class="px-lg py-md">Slug</th>
+                                        <th class="px-lg py-md">Type</th>
+                                        <th class="px-lg py-md">Priority</th>
+                                        <th class="px-lg py-md">Retry Count</th>
+                                        <th class="px-lg py-md">Timeout</th>
+                                        <th class="px-lg py-md">Status</th>
+                                        <th class="px-lg py-md">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/30" id="integrationsBody">
+                                    <tr><td colspan="8" class="px-lg py-md text-center text-on-surface-variant">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                        <header class="glass-header px-gutter py-md border-b border-outline-variant/30">
+                            <h4 class="font-headline-md text-body-lg font-bold">Webhook URLs</h4>
+                        </header>
+                        <div class="p-lg" id="webhookUrls">
+                            <p class="text-on-surface-variant text-center py-8">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Field Mapping Screen -->
+                <div class="screen" id="screen-field-mapping">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+                        <div>
+                            <h2 class="font-headline-lg text-headline-lg text-primary mb-1">Field Mapping Configuration</h2>
+                            <p class="text-on-surface-variant font-body-md">Define how fields are mapped between systems.</p>
+                        </div>
+                        <div class="flex gap-sm">
+                            <button class="px-md py-sm rounded-xl bg-secondary text-on-secondary font-label-md shadow-lg shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2" id="createFieldMappingBtn">
+                                <span class="material-symbols-outlined text-[18px]">add</span>
+                                New Mapping
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-surface-container-low/50 text-label-md uppercase tracking-wider text-on-surface-variant">
+                                    <tr>
+                                        <th class="px-lg py-md">Name</th>
+                                        <th class="px-lg py-md">Description</th>
+                                        <th class="px-lg py-md">Mapping Count</th>
+                                        <th class="px-lg py-md">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/30" id="fieldMappingsBody">
+                                    <tr><td colspan="4" class="px-lg py-md text-center text-on-surface-variant">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Routing Rules Screen -->
+                <div class="screen" id="screen-routing-rules">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+                        <div>
+                            <h2 class="font-headline-lg text-headline-lg text-primary mb-1">Routing Rules</h2>
+                            <p class="text-on-surface-variant font-body-md">Configure automated lead routing logic.</p>
+                        </div>
+                        <div class="flex gap-sm">
+                            <button class="px-md py-sm rounded-xl bg-secondary text-on-secondary font-label-md shadow-lg shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2" id="createRoutingRuleBtn">
+                                <span class="material-symbols-outlined text-[18px]">add</span>
+                                New Rule
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-surface-container-low/50 text-label-md uppercase tracking-wider text-on-surface-variant">
+                                    <tr>
+                                        <th class="px-lg py-md">Name</th>
+                                        <th class="px-lg py-md">Priority</th>
+                                        <th class="px-lg py-md">Conditions</th>
+                                        <th class="px-lg py-md">Actions</th>
+                                        <th class="px-lg py-md">Status</th>
+                                        <th class="px-lg py-md">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/30" id="routingRulesBody">
+                                    <tr><td colspan="6" class="px-lg py-md text-center text-on-surface-variant">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zoho Screen -->
+                <div class="screen" id="screen-zoho">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+                        <div>
+                            <h2 class="font-headline-lg text-headline-lg text-primary mb-1">Zoho CRM Integration</h2>
+                            <p class="text-on-surface-variant font-body-md">Configure and manage Zoho CRM synchronization.</p>
+                        </div>
+                        <div class="flex gap-sm">
+                            <button class="px-md py-sm rounded-xl border border-outline-variant bg-white font-label-md text-secondary hover:bg-surface-container transition-all flex items-center gap-2" id="testZohoBtn">
+                                <span class="material-symbols-outlined text-[18px]">link</span>
+                                Test Connection
+                            </button>
+                            <button class="px-md py-sm rounded-xl border border-outline-variant bg-white font-label-md text-secondary hover:bg-surface-container transition-all flex items-center gap-2" id="refreshZohoTokenBtn">
+                                <span class="material-symbols-outlined text-[18px]">refresh</span>
+                                Refresh Token
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-md mb-lg">
+                        <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                            <header class="glass-header px-gutter py-md border-b border-outline-variant/30">
+                                <h4 class="font-headline-md text-body-lg font-bold">Configuration</h4>
+                            </header>
+                            <div class="p-lg space-y-md" id="zohoConfigForm">
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Client ID</label>
+                                    <input type="text" class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="zohoClientId" placeholder="Enter Client ID">
+                                </div>
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Client Secret</label>
+                                    <input type="password" class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="zohoClientSecret" placeholder="Enter Client Secret">
+                                </div>
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Redirect URI</label>
+                                    <input type="text" class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="zohoRedirectUri" placeholder="Enter Redirect URI">
+                                </div>
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Organization ID</label>
+                                    <input type="text" class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="zohoOrgId" placeholder="Enter Organization ID">
+                                </div>
+                                <button class="w-full px-md py-sm rounded-xl bg-secondary text-on-secondary font-label-md shadow-lg shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2" id="saveZohoConfigBtn">
+                                    <span class="material-symbols-outlined text-[18px]">save</span>
+                                    Save Configuration
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                            <header class="glass-header px-gutter py-md border-b border-outline-variant/30">
+                                <h4 class="font-headline-md text-body-lg font-bold">Sync Status</h4>
+                            </header>
+                            <div class="p-lg" id="zohoSyncStatus">
+                                <p class="text-on-surface-variant text-center py-8">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                        <header class="glass-header px-gutter py-md border-b border-outline-variant/30">
+                            <h4 class="font-headline-md text-body-lg font-bold">Sync Logs</h4>
+                        </header>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-surface-container-low/50 text-label-md uppercase tracking-wider text-on-surface-variant">
+                                    <tr>
+                                        <th class="px-lg py-md">Timestamp</th>
+                                        <th class="px-lg py-md">Lead ID</th>
+                                        <th class="px-lg py-md">Direction</th>
+                                        <th class="px-lg py-md">Status</th>
+                                        <th class="px-lg py-md">Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/30" id="zohoSyncLogsBody">
+                                    <tr><td colspan="5" class="px-lg py-md text-center text-on-surface-variant">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AiSensy Screen -->
+                <div class="screen" id="screen-aisensy">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+                        <div>
+                            <h2 class="font-headline-lg text-headline-lg text-primary mb-1">AiSensy WhatsApp Integration</h2>
+                            <p class="text-on-surface-variant font-body-md">Configure WhatsApp automation and messaging.</p>
+                        </div>
+                        <div class="flex gap-sm">
+                            <button class="px-md py-sm rounded-xl border border-outline-variant bg-white font-label-md text-secondary hover:bg-surface-container transition-all flex items-center gap-2" id="testAiSensyBtn">
+                                <span class="material-symbols-outlined text-[18px]">link</span>
+                                Test Connection
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-md mb-lg">
+                        <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                            <header class="glass-header px-gutter py-md border-b border-outline-variant/30">
+                                <h4 class="font-headline-md text-body-lg font-bold">Configuration</h4>
+                            </header>
+                            <div class="p-lg space-y-md" id="aisensyConfigForm">
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">API Key</label>
+                                    <input type="password" class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="aisensyApiKey" placeholder="Enter API Key">
+                                </div>
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Sender Number</label>
+                                    <input type="text" class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="aisensySenderNumber" placeholder="Enter Sender Number">
+                                </div>
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Webhook URL</label>
+                                    <input type="text" class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="aisensyWebhookUrl" placeholder="Enter Webhook URL">
+                                </div>
+                                <button class="w-full px-md py-sm rounded-xl bg-secondary text-on-secondary font-label-md shadow-lg shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2" id="saveAiSensyConfigBtn">
+                                    <span class="material-symbols-outlined text-[18px]">save</span>
+                                    Save Configuration
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                            <header class="glass-header px-gutter py-md border-b border-outline-variant/30">
+                                <h4 class="font-headline-md text-body-lg font-bold">Send Test Message</h4>
+                            </header>
+                            <div class="p-lg space-y-md">
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Phone Number</label>
+                                    <input type="text" class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="aisensyTestPhone" placeholder="Enter phone number with country code">
+                                </div>
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Message</label>
+                                    <textarea class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none min-h-[100px]" id="aisensyTestMessage" placeholder="Enter test message"></textarea>
+                                </div>
+                                <button class="w-full px-md py-sm rounded-xl bg-secondary text-on-secondary font-label-md shadow-lg shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2" id="sendAiSensyTestBtn">
+                                    <span class="material-symbols-outlined text-[18px]">send</span>
+                                    Send Test
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                        <header class="glass-header px-gutter py-md border-b border-outline-variant/30">
+                            <h4 class="font-headline-md text-body-lg font-bold">Activity Logs</h4>
+                        </header>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-surface-container-low/50 text-label-md uppercase tracking-wider text-on-surface-variant">
+                                    <tr>
+                                        <th class="px-lg py-md">Timestamp</th>
+                                        <th class="px-lg py-md">Phone</th>
+                                        <th class="px-lg py-md">Status</th>
+                                        <th class="px-lg py-md">Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/30" id="aisensyLogsBody">
+                                    <tr><td colspan="4" class="px-lg py-md text-center text-on-surface-variant">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Telegram Screen -->
+                <div class="screen" id="screen-telegram">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+                        <div>
+                            <h2 class="font-headline-lg text-headline-lg text-primary mb-1">Telegram Bot Integration</h2>
+                            <p class="text-on-surface-variant font-body-md">Configure Telegram bot for notifications and alerts.</p>
+                        </div>
+                        <div class="flex gap-sm">
+                            <button class="px-md py-sm rounded-xl border border-outline-variant bg-white font-label-md text-secondary hover:bg-surface-container transition-all flex items-center gap-2" id="testTelegramBtn">
+                                <span class="material-symbols-outlined text-[18px]">link</span>
+                                Test Connection
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-md mb-lg">
+                        <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                            <header class="glass-header px-gutter py-md border-b border-outline-variant/30">
+                                <h4 class="font-headline-md text-body-lg font-bold">Configuration</h4>
+                            </header>
+                            <div class="p-lg space-y-md" id="telegramConfigForm">
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Bot Token</label>
+                                    <input type="password" class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="telegramBotToken" placeholder="Enter Bot Token">
+                                </div>
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Chat ID</label>
+                                    <input type="text" class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="telegramChatId" placeholder="Enter Chat ID">
+                                </div>
+                                <button class="w-full px-md py-sm rounded-xl bg-secondary text-on-secondary font-label-md shadow-lg shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2" id="saveTelegramConfigBtn">
+                                    <span class="material-symbols-outlined text-[18px]">save</span>
+                                    Save Configuration
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                            <header class="glass-header px-gutter py-md border-b border-outline-variant/30">
+                                <h4 class="font-headline-md text-body-lg font-bold">Send Test Message</h4>
+                            </header>
+                            <div class="p-lg space-y-md">
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Message</label>
+                                    <textarea class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none min-h-[100px]" id="telegramTestMessage" placeholder="Enter test message"></textarea>
+                                </div>
+                                <button class="w-full px-md py-sm rounded-xl bg-secondary text-on-secondary font-label-md shadow-lg shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2" id="sendTelegramTestBtn">
+                                    <span class="material-symbols-outlined text-[18px]">send</span>
+                                    Send Test
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                        <header class="glass-header px-gutter py-md border-b border-outline-variant/30">
+                            <h4 class="font-headline-md text-body-lg font-bold">Activity Logs</h4>
+                        </header>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-surface-container-low/50 text-label-md uppercase tracking-wider text-on-surface-variant">
+                                    <tr>
+                                        <th class="px-lg py-md">Timestamp</th>
+                                        <th class="px-lg py-md">Status</th>
+                                        <th class="px-lg py-md">Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/30" id="telegramLogsBody">
+                                    <tr><td colspan="3" class="px-lg py-md text-center text-on-surface-variant">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Screen -->
+                <div class="screen" id="screen-users">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+                        <div>
+                            <h2 class="font-headline-lg text-headline-lg text-primary mb-1">User Management</h2>
+                            <p class="text-on-surface-variant font-body-md">Manage users, roles, and permissions.</p>
+                        </div>
+                        <div class="flex gap-sm">
+                            <button class="px-md py-sm rounded-xl bg-secondary text-on-secondary font-label-md shadow-lg shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2" id="createUserBtn">
+                                <span class="material-symbols-outlined text-[18px]">add</span>
+                                New User
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-surface-container-low/50 text-label-md uppercase tracking-wider text-on-surface-variant">
+                                    <tr>
+                                        <th class="px-lg py-md">Name</th>
+                                        <th class="px-lg py-md">Email</th>
+                                        <th class="px-lg py-md">Role</th>
+                                        <th class="px-lg py-md">Status</th>
+                                        <th class="px-lg py-md">Created</th>
+                                        <th class="px-lg py-md">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/30" id="usersBody">
+                                    <tr><td colspan="6" class="px-lg py-md text-center text-on-surface-variant">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Screen -->
+                <div class="screen" id="screen-settings">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+                        <div>
+                            <h2 class="font-headline-lg text-headline-lg text-primary mb-1">System Settings</h2>
+                            <p class="text-on-surface-variant font-body-md">Configure system-wide settings and preferences.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                        <div class="border-b border-outline-variant/30">
+                            <div class="flex">
+                                <button class="px-lg py-md text-secondary border-b-2 border-secondary font-medium settings-tab active" data-tab="general">General</button>
+                                <button class="px-lg py-md text-on-surface-variant hover:text-secondary border-b-2 border-transparent font-medium settings-tab" data-tab="server">Server</button>
+                                <button class="px-lg py-md text-on-surface-variant hover:text-secondary border-b-2 border-transparent font-medium settings-tab" data-tab="features">Features</button>
+                                <button class="px-lg py-md text-on-surface-variant hover:text-secondary border-b-2 border-transparent font-medium settings-tab" data-tab="node">Node Backend</button>
+                            </div>
+                        </div>
+                        <div class="p-lg" id="settingsContent">
+                            <p class="text-on-surface-variant text-center py-8">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audit Logs Screen -->
+                <div class="screen" id="screen-audit-logs">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+                        <div>
+                            <h2 class="font-headline-lg text-headline-lg text-primary mb-1">Audit Logs</h2>
+                            <p class="text-on-surface-variant font-body-md">Track all system activities and changes.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden mb-lg">
+                        <div class="p-gutter">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-md">
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Action</label>
+                                    <select class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="auditActionFilter">
+                                        <option value="">All Actions</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Entity Type</label>
+                                    <select class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="auditEntityTypeFilter">
+                                        <option value="">All Entities</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">User ID</label>
+                                    <input type="text" class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="auditUserFilter" placeholder="Enter user ID">
+                                </div>
+                                <div>
+                                    <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Limit</label>
+                                    <select class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="auditLimitFilter">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-surface-container-low/50 text-label-md uppercase tracking-wider text-on-surface-variant">
+                                    <tr>
+                                        <th class="px-lg py-md">Timestamp</th>
+                                        <th class="px-lg py-md">User</th>
+                                        <th class="px-lg py-md">Action</th>
+                                        <th class="px-lg py-md">Entity Type</th>
+                                        <th class="px-lg py-md">Entity ID</th>
+                                        <th class="px-lg py-md">Changes</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/30" id="auditLogsBody">
+                                    <tr><td colspan="6" class="px-lg py-md text-center text-on-surface-variant">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sync Monitor Screen -->
+                <div class="screen" id="screen-sync-monitor">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+                        <div>
+                            <h2 class="font-headline-lg text-headline-lg text-primary mb-1">Sync Monitor</h2>
+                            <p class="text-on-surface-variant font-body-md">Monitor synchronization status and history.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-lg">
+                        <div class="bg-surface-container-lowest p-gutter rounded-xl shadow-sm border border-outline-variant/30 flex items-center justify-between group hover:shadow-md transition-shadow">
+                            <div>
+                                <p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Auto Sync</p>
+                                <h3 class="text-headline-lg font-headline-lg mt-1" id="syncAutoStatus">-</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+                                <span class="material-symbols-outlined">sync</span>
+                            </div>
+                        </div>
+                        <div class="bg-surface-container-lowest p-gutter rounded-xl shadow-sm border border-outline-variant/30 flex items-center justify-between group hover:shadow-md transition-shadow">
+                            <div>
+                                <p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Auto Send</p>
+                                <h3 class="text-headline-lg font-headline-lg mt-1" id="syncAutoSendStatus">-</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg bg-tertiary-fixed/30 flex items-center justify-center text-on-tertiary-container">
+                                <span class="material-symbols-outlined">send</span>
+                            </div>
+                        </div>
+                        <div class="bg-surface-container-lowest p-gutter rounded-xl shadow-sm border border-outline-variant/30 flex items-center justify-between group hover:shadow-md transition-shadow">
+                            <div>
+                                <p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Last Sync</p>
+                                <h3 class="text-headline-lg font-headline-lg mt-1" id="syncLastSync">-</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center text-green-700">
+                                <span class="material-symbols-outlined">schedule</span>
+                            </div>
+                        </div>
+                        <div class="bg-surface-container-lowest p-gutter rounded-xl shadow-sm border border-outline-variant/30 flex items-center justify-between group hover:shadow-md transition-shadow">
+                            <div>
+                                <p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Failed</p>
+                                <h3 class="text-headline-lg font-headline-lg mt-1" id="syncFailedCount">-</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg bg-error/10 flex items-center justify-center text-error">
+                                <span class="material-symbols-outlined">error</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                        <header class="glass-header px-gutter py-md border-b border-outline-variant/30">
+                            <h4 class="font-headline-md text-body-lg font-bold">Sync History</h4>
+                        </header>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-surface-container-low/50 text-label-md uppercase tracking-wider text-on-surface-variant">
+                                    <tr>
+                                        <th class="px-lg py-md">Timestamp</th>
+                                        <th class="px-lg py-md">Type</th>
+                                        <th class="px-lg py-md">Status</th>
+                                        <th class="px-lg py-md">Records</th>
+                                        <th class="px-lg py-md">Duration</th>
+                                        <th class="px-lg py-md">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-outline-variant/30" id="syncHistoryBody">
+                                    <tr><td colspan="6" class="px-lg py-md text-center text-on-surface-variant">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Health Screen -->
+                <div class="screen" id="screen-system-health">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+                        <div>
+                            <h2 class="font-headline-lg text-headline-lg text-primary mb-1">System Health</h2>
+                            <p class="text-on-surface-variant font-body-md">Monitor system performance and status.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-lg">
+                        <div class="bg-surface-container-lowest p-gutter rounded-xl shadow-sm border border-outline-variant/30 flex items-center justify-between group hover:shadow-md transition-shadow">
+                            <div>
+                                <p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Node Backend</p>
+                                <h3 class="text-headline-lg font-headline-lg mt-1" id="healthNodeStatus">-</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary">
+                                <span class="material-symbols-outlined">cloud</span>
+                            </div>
+                        </div>
+                        <div class="bg-surface-container-lowest p-gutter rounded-xl shadow-sm border border-outline-variant/30 flex items-center justify-between group hover:shadow-md transition-shadow">
+                            <div>
+                                <p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Database</p>
+                                <h3 class="text-headline-lg font-headline-lg mt-1" id="healthDatabaseStatus">-</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg bg-tertiary-fixed/30 flex items-center justify-center text-on-tertiary-container">
+                                <span class="material-symbols-outlined">storage</span>
+                            </div>
+                        </div>
+                        <div class="bg-surface-container-lowest p-gutter rounded-xl shadow-sm border border-outline-variant/30 flex items-center justify-between group hover:shadow-md transition-shadow">
+                            <div>
+                                <p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Uptime</p>
+                                <h3 class="text-headline-lg font-headline-lg mt-1" id="healthUptime">-</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center text-green-700">
+                                <span class="material-symbols-outlined">timer</span>
+                            </div>
+                        </div>
+                        <div class="bg-surface-container-lowest p-gutter rounded-xl shadow-sm border border-outline-variant/30 flex items-center justify-between group hover:shadow-md transition-shadow">
+                            <div>
+                                <p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Integrations</p>
+                                <h3 class="text-headline-lg font-headline-lg mt-1" id="healthIntegrations">-</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary-container">
+                                <span class="material-symbols-outlined">extension</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-md">
+                        <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                            <header class="glass-header px-gutter py-md border-b border-outline-variant/30">
+                                <h4 class="font-headline-md text-body-lg font-bold">System Metrics</h4>
+                            </header>
+                            <div class="p-lg" id="systemMetrics">
+                                <p class="text-on-surface-variant text-center py-8">Loading...</p>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+                            <header class="glass-header px-gutter py-md border-b border-outline-variant/30">
+                                <h4 class="font-headline-md text-body-lg font-bold">Database Statistics</h4>
+                            </header>
+                            <div class="p-lg" id="databaseStats">
+                                <p class="text-on-surface-variant text-center py-8">Loading...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Template -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="glass-header px-gutter py-md border-b border-outline-variant/30 flex justify-between items-center sticky top-0 z-10">
+                <h3 class="font-headline-md text-headline-md font-bold text-primary" id="modalTitle">Modal Title</h3>
+                <button class="w-8 h-8 rounded-full hover:bg-surface-container transition-colors flex items-center justify-center" id="modalClose">
+                    <span class="material-symbols-outlined text-on-surface-variant">close</span>
+                </button>
+            </div>
+            <div class="p-lg" id="modalBody">
+                <!-- Modal content will be injected here -->
+            </div>
+            <div class="px-gutter py-md border-t border-outline-variant/30 flex justify-end gap-sm" id="modalFooter">
+                <button class="px-md py-sm rounded-xl border border-outline-variant bg-white font-label-md text-secondary hover:bg-surface-container transition-all" id="modalCancel">Cancel</button>
+                <button class="px-md py-sm rounded-xl bg-secondary text-on-secondary font-label-md shadow-lg shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all" id="modalSave">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State Management
+        const State = {
+            currentScreen: 'dashboard',
+            leads: [],
+            integrations: [],
+            fieldMappings: [],
+            routingRules: [],
+            users: [],
+            auditLogs: [],
+            syncHistory: [],
+            selectedLeads: new Set()
+        };
+
+        // API Client
+        const API = {
+            async call(action, payload = {}) {
+                return new Promise((resolve, reject) => {
+                    google.script.run
+                        .withSuccessHandler((response) => {
+                            if (response.success) {
+                                resolve(response.data);
+                            } else {
+                                reject(new Error(response.message || 'API call failed'));
+                            }
+                        })
+                        .withFailureHandler((error) => {
+                            reject(new Error(error.message || 'Network error'));
+                        })
+                        .handleAdminActionEnhanced({ _adminAction: action, ...payload });
+                });
+            }
+        };
+
+        // UI Helpers
+        const UI = {
+            showAlert(message, type = 'info') {
+                const container = document.getElementById('alertContainer');
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type}`;
+                alert.textContent = message;
+                container.appendChild(alert);
+                setTimeout(() => alert.remove(), 5000);
+            },
+
+            openModal(title, bodyContent, onSave) {
+                document.getElementById('modalTitle').textContent = title;
+                document.getElementById('modalBody').innerHTML = bodyContent;
+                document.getElementById('modalOverlay').classList.add('active');
+                
+                document.getElementById('modalSave').onclick = async () => {
+                    try {
+                        await onSave();
+                        UI.closeModal();
+                    } catch (error) {
+                        UI.showAlert(error.message, 'error');
+                    }
+                };
+            },
+
+            closeModal() {
+                document.getElementById('modalOverlay').classList.remove('active');
+            },
+
+            showLoading(elementId) {
+                document.getElementById(elementId).innerHTML = '<p class="text-on-surface-variant text-center py-8">Loading...</p>';
+            },
+
+            formatNumber(num) {
+                if (num === null || num === undefined) return '-';
+                return num.toLocaleString();
+            },
+
+            formatCurrency(amount) {
+                if (amount === null || amount === undefined) return '-';
+                return '₹' + amount.toLocaleString();
+            },
+
+            formatDate(dateStr) {
+                if (!dateStr) return '-';
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+            },
+
+            getStatusBadge(status) {
+                const colors = {
+                    'New': 'bg-blue-100 text-blue-700',
+                    'Contacted': 'bg-purple-100 text-purple-700',
+                    'Qualified': 'bg-green-100 text-green-700',
+                    'Booked': 'bg-emerald-100 text-emerald-700',
+                    'Lost': 'bg-red-100 text-red-700',
+                    'Active': 'bg-green-100 text-green-700',
+                    'Inactive': 'bg-gray-100 text-gray-700',
+                    'Enabled': 'bg-green-100 text-green-700',
+                    'Disabled': 'bg-gray-100 text-gray-700',
+                    'Success': 'bg-green-100 text-green-700',
+                    'Failed': 'bg-red-100 text-red-700',
+                    'Pending': 'bg-yellow-100 text-yellow-700'
+                };
+                const colorClass = colors[status] || 'bg-gray-100 text-gray-700';
+                return `<span class="${colorClass} px-2 py-1 rounded text-[10px] font-bold uppercase">${status}</span>`;
+            }
+        };
+
+        // Navigation
+        function switchScreen(screenName) {
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active', 'bg-secondary/10', 'text-secondary', 'border-l-4', 'border-secondary');
+                item.classList.add('text-on-primary-container/70');
+                if (item.dataset.screen === screenName) {
+                    item.classList.add('active', 'bg-secondary/10', 'text-secondary', 'border-l-4', 'border-secondary');
+                    item.classList.remove('text-on-primary-container/70');
+                }
+            });
+
+            // Update screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(`screen-${screenName}`).classList.add('active');
+
+            // Update header
+            const titles = {
+                'dashboard': 'Dashboard',
+                'leads': 'Leads',
+                'integrations': 'Integrations',
+                'field-mapping': 'Field Mapping',
+                'routing-rules': 'Routing Rules',
+                'zoho': 'Zoho',
+                'aisensy': 'AiSensy',
+                'telegram': 'Telegram',
+                'users': 'Users',
+                'settings': 'Settings',
+                'audit-logs': 'Audit Logs',
+                'sync-monitor': 'Sync Monitor',
+                'system-health': 'System Health'
+            };
+            document.getElementById('headerTitle').textContent = titles[screenName] || screenName;
+
+            State.currentScreen = screenName;
+            loadScreenData(screenName);
+        }
+
+        // Screen Data Loading
+        async function loadScreenData(screenName) {
+            switch(screenName) {
+                case 'dashboard':
+                    await loadDashboard();
+                    break;
+                case 'leads':
+                    await loadLeads();
+                    break;
+                case 'integrations':
+                    await loadIntegrations();
+                    break;
+                case 'field-mapping':
+                    await loadFieldMappings();
+                    break;
+                case 'routing-rules':
+                    await loadRoutingRules();
+                    break;
+                case 'zoho':
+                    await loadZohoConfig();
+                    break;
+                case 'aisensy':
+                    await loadAiSensyConfig();
+                    break;
+                case 'telegram':
+                    await loadTelegramConfig();
+                    break;
+                case 'users':
+                    await loadUsers();
+                    break;
+                case 'settings':
+                    await loadSettings();
+                    break;
+                case 'audit-logs':
+                    await loadAuditLogs();
+                    break;
+                case 'sync-monitor':
+                    await loadSyncStatus();
+                    break;
+                case 'system-health':
+                    await loadSystemHealth();
+                    break;
+            }
+        }
+
+        // Dashboard
+        async function loadDashboard() {
+            try {
+                const data = await API.call('getDashboardData');
+                
+                // Update stats
+                document.getElementById('statTodayLeads').textContent = UI.formatNumber(data.summary.todayCount);
+                document.getElementById('statTotalLeads').textContent = UI.formatNumber(data.summary.total);
+                document.getElementById('statWeekLeads').textContent = UI.formatNumber(data.summary.weekCount);
+                document.getElementById('statMonthLeads').textContent = UI.formatNumber(data.summary.monthCount);
+                document.getElementById('statWASent').textContent = UI.formatNumber(data.summary.wasSent);
+                document.getElementById('statWAFailed').textContent = UI.formatNumber(data.summary.wasFailed);
+                document.getElementById('statConversion').textContent = data.summary.conversionRate + '%';
+                document.getElementById('statRevenue').textContent = UI.formatCurrency(data.summary.revenue);
+                document.getElementById('statSiteVisits').textContent = UI.formatNumber(data.summary.siteVisits);
+
+                // Update WA progress
+                const totalWA = data.summary.wasSent + data.summary.wasFailed;
+                const waProgress = totalWA > 0 ? (data.summary.wasSent / totalWA * 100) : 0;
+                document.getElementById('waProgress').style.width = waProgress + '%';
+
+                // Update recent leads
+                const recentLeadsBody = document.getElementById('recentLeadsBody');
+                recentLeadsBody.innerHTML = data.recentLeads.map(lead => `
+                    <tr class="hover:bg-surface-container-low transition-colors">
+                        <td class="px-lg py-md font-medium">${lead.leadId}</td>
+                        <td class="px-lg py-md">${lead.name}</td>
+                        <td class="px-lg py-md">${lead.phone}</td>
+                        <td class="px-lg py-md">${lead.source}</td>
+                        <td class="px-lg py-md">${UI.getStatusBadge(lead.status)}</td>
+                        <td class="px-lg py-md">${lead.assignedTo || '-'}</td>
+                        <td class="px-lg py-md text-sm text-on-surface-variant">${UI.formatDate(lead.created)}</td>
+                    </tr>
+                `).join('');
+
+                // Update top sources
+                const topSources = document.getElementById('topSources');
+                const sourceEntries = Object.entries(data.sourceCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+                topSources.innerHTML = sourceEntries.map(([source, count], index) => `
+                    <div class="flex items-center justify-between py-3 border-b border-outline-variant/20 last:border-0">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary font-bold text-sm">${index + 1}</div>
+                            <span class="font-medium">${source || 'Unknown'}</span>
+                        </div>
+                        <span class="font-bold text-primary">${UI.formatNumber(count)}</span>
+                    </div>
+                `).join('');
+
+                // Update top agents
+                const topAgents = document.getElementById('topAgents');
+                const agentEntries = Object.entries(data.agentCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+                topAgents.innerHTML = agentEntries.map(([agent, count], index) => `
+                    <div class="flex items-center justify-between py-3 border-b border-outline-variant/20 last:border-0">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary font-bold text-sm">${index + 1}</div>
+                            <span class="font-medium">${agent || 'Unassigned'}</span>
+                        </div>
+                        <span class="font-bold text-primary">${UI.formatNumber(count)}</span>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        // Leads
+        async function loadLeads() {
+            try {
+                const payload = {
+                    search: document.getElementById('leadSearch').value,
+                    source: document.getElementById('leadSourceFilter').value,
+                    status: document.getElementById('leadStatusFilter').value,
+                    assignedTo: document.getElementById('leadAssignedFilter').value,
+                    page: 1,
+                    limit: 50
+                };
+                const data = await API.call('getLeads', payload);
+                
+                State.leads = data.leads;
+                document.getElementById('leadsTotal').textContent = UI.formatNumber(data.total);
+                document.getElementById('leadsFiltered').textContent = UI.formatNumber(data.total);
+                document.getElementById('leadsPage').textContent = data.page;
+
+                const leadsBody = document.getElementById('leadsBody');
+                leadsBody.innerHTML = data.leads.map(lead => `
+                    <tr class="hover:bg-surface-container-low transition-colors">
+                        <td class="px-lg py-md"><input type="checkbox" class="lead-checkbox w-4 h-4 rounded border-outline-variant" data-lead-id="${lead.leadId}"></td>
+                        <td class="px-lg py-md font-medium">${lead.leadId}</td>
+                        <td class="px-lg py-md">${lead.name}</td>
+                        <td class="px-lg py-md">${lead.phone}</td>
+                        <td class="px-lg py-md">${lead.email || '-'}</td>
+                        <td class="px-lg py-md">${lead.source}</td>
+                        <td class="px-lg py-md">${UI.getStatusBadge(lead.status)}</td>
+                        <td class="px-lg py-md">${lead.assignedTo || '-'}</td>
+                        <td class="px-lg py-md">${UI.getStatusBadge(lead.waStatus)}</td>
+                        <td class="px-lg py-md text-sm text-on-surface-variant">${UI.formatDate(lead.createdAt)}</td>
+                        <td class="px-lg py-md">
+                            <button class="text-secondary hover:text-primary transition-colors" onclick="editLead('${lead.leadId}')">
+                                <span class="material-symbols-outlined text-sm">edit</span>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                document.getElementById('leadsPaginationInfo').textContent = `Showing ${data.leads.length} of ${data.total} leads`;
+
+                // Populate filters
+                const sources = [...new Set(data.leads.map(l => l.source).filter(s => s))];
+                const sourceFilter = document.getElementById('leadSourceFilter');
+                sourceFilter.innerHTML = '<option value="">All Sources</option>' + sources.map(s => `<option value="${s}">${s}</option>`).join('');
+
+                const agents = [...new Set(data.leads.map(l => l.assignedTo).filter(a => a))];
+                const agentFilter = document.getElementById('leadAssignedFilter');
+                agentFilter.innerHTML = '<option value="">All Agents</option>' + agents.map(a => `<option value="${a}">${a}</option>`).join('');
+
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        // Integrations
+        async function loadIntegrations() {
+            try {
+                const data = await API.call('getIntegrations');
+                State.integrations = data.integrations || [];
+
+                const integrationsBody = document.getElementById('integrationsBody');
+                integrationsBody.innerHTML = State.integrations.map(int => `
+                    <tr class="hover:bg-surface-container-low transition-colors">
+                        <td class="px-lg py-md font-medium">${int.name}</td>
+                        <td class="px-lg py-md">${int.slug}</td>
+                        <td class="px-lg py-md">${int.type}</td>
+                        <td class="px-lg py-md">${int.priority}</td>
+                        <td class="px-lg py-md">${int.retryCount}</td>
+                        <td class="px-lg py-md">${int.timeout}ms</td>
+                        <td class="px-lg py-md">${UI.getStatusBadge(int.enabled ? 'Enabled' : 'Disabled')}</td>
+                        <td class="px-lg py-md">
+                            <button class="text-secondary hover:text-primary transition-colors mr-2" onclick="testIntegration('${int.id}')">
+                                <span class="material-symbols-outlined text-sm">science</span>
+                            </button>
+                            <button class="text-secondary hover:text-primary transition-colors mr-2" onclick="editIntegration('${int.id}')">
+                                <span class="material-symbols-outlined text-sm">edit</span>
+                            </button>
+                            <button class="text-error hover:text-red-700 transition-colors" onclick="deleteIntegration('${int.id}')">
+                                <span class="material-symbols-outlined text-sm">delete</span>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                // Load webhook URLs
+                const webhookData = await API.call('getWebhookUrls');
+                const webhookUrls = document.getElementById('webhookUrls');
+                webhookUrls.innerHTML = webhookData.webhooks ? webhookData.webhooks.map(webhook => `
+                    <div class="flex items-center justify-between py-3 border-b border-outline-variant/20 last:border-0">
+                        <div>
+                            <p class="font-medium">${webhook.name}</p>
+                            <p class="text-sm text-on-surface-variant">${webhook.url}</p>
+                        </div>
+                        <button class="text-secondary hover:text-primary transition-colors" onclick="copyToClipboard('${webhook.url}')">
+                            <span class="material-symbols-outlined text-sm">content_copy</span>
+                        </button>
+                    </div>
+                `).join('') : '<p class="text-on-surface-variant text-center py-8">No webhooks configured</p>';
+
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        // Field Mappings
+        async function loadFieldMappings() {
+            try {
+                const data = await API.call('getFieldMappings');
+                State.fieldMappings = data.mappings || [];
+
+                const fieldMappingsBody = document.getElementById('fieldMappingsBody');
+                fieldMappingsBody.innerHTML = State.fieldMappings.map(mapping => `
+                    <tr class="hover:bg-surface-container-low transition-colors">
+                        <td class="px-lg py-md font-medium">${mapping.name}</td>
+                        <td class="px-lg py-md">${mapping.description || '-'}</td>
+                        <td class="px-lg py-md">${Object.keys(mapping.mapping || {}).length}</td>
+                        <td class="px-lg py-md">
+                            <button class="text-secondary hover:text-primary transition-colors mr-2" onclick="editFieldMapping('${mapping.id}')">
+                                <span class="material-symbols-outlined text-sm">edit</span>
+                            </button>
+                            <button class="text-error hover:text-red-700 transition-colors" onclick="deleteFieldMapping('${mapping.id}')">
+                                <span class="material-symbols-outlined text-sm">delete</span>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        // Routing Rules
+        async function loadRoutingRules() {
+            try {
+                const data = await API.call('getRoutingRules');
+                State.routingRules = data.rules || [];
+
+                const routingRulesBody = document.getElementById('routingRulesBody');
+                routingRulesBody.innerHTML = State.routingRules.map(rule => `
+                    <tr class="hover:bg-surface-container-low transition-colors">
+                        <td class="px-lg py-md font-medium">${rule.name}</td>
+                        <td class="px-lg py-md">${rule.priority}</td>
+                        <td class="px-lg py-md text-sm">${Object.keys(rule.conditions || {}).length} conditions</td>
+                        <td class="px-lg py-md text-sm">${Object.keys(rule.actions || {}).length} actions</td>
+                        <td class="px-lg py-md">${UI.getStatusBadge(rule.enabled ? 'Enabled' : 'Disabled')}</td>
+                        <td class="px-lg py-md">
+                            <button class="text-secondary hover:text-primary transition-colors mr-2" onclick="editRoutingRule('${rule.id}')">
+                                <span class="material-symbols-outlined text-sm">edit</span>
+                            </button>
+                            <button class="text-error hover:text-red-700 transition-colors" onclick="deleteRoutingRule('${rule.id}')">
+                                <span class="material-symbols-outlined text-sm">delete</span>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        // Zoho
+        async function loadZohoConfig() {
+            try {
+                const config = await API.call('getZohoConfig');
+                if (config.config) {
+                    document.getElementById('zohoClientId').value = config.config.clientId || '';
+                    document.getElementById('zohoRedirectUri').value = config.config.redirectUri || '';
+                    document.getElementById('zohoOrgId').value = config.config.orgId || '';
+                }
+
+                const syncLogs = await API.call('getZohoSyncLogs');
+                const zohoSyncLogsBody = document.getElementById('zohoSyncLogsBody');
+                zohoSyncLogsBody.innerHTML = syncLogs.logs ? syncLogs.logs.map(log => `
+                    <tr class="hover:bg-surface-container-low transition-colors">
+                        <td class="px-lg py-md text-sm text-on-surface-variant">${UI.formatDate(log.timestamp)}</td>
+                        <td class="px-lg py-md">${log.leadId || '-'}</td>
+                        <td class="px-lg py-md">${log.direction || '-'}</td>
+                        <td class="px-lg py-md">${UI.getStatusBadge(log.status)}</td>
+                        <td class="px-lg py-md text-sm">${log.message || '-'}</td>
+                    </tr>
+                `).join('') : '<tr><td colspan="5" class="px-lg py-md text-center text-on-surface-variant">No sync logs</td></tr>';
+
+                const syncStatus = document.getElementById('zohoSyncStatus');
+                syncStatus.innerHTML = config.config ? `
+                    <div class="space-y-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-on-surface-variant">Connection Status</span>
+                            ${UI.getStatusBadge(config.config.connected ? 'Connected' : 'Disconnected')}
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-on-surface-variant">Last Sync</span>
+                            <span class="font-medium">${config.config.lastSync ? UI.formatDate(config.config.lastSync) : 'Never'}</span>
+                        </div>
+                    </div>
+                ` : '<p class="text-on-surface-variant text-center py-8">No configuration found</p>';
+
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        // AiSensy
+        async function loadAiSensyConfig() {
+            try {
+                const config = await API.call('getAiSensyConfig');
+                if (config.config) {
+                    document.getElementById('aisensyApiKey').value = config.config.apiKey || '';
+                    document.getElementById('aisensySenderNumber').value = config.config.senderNumber || '';
+                    document.getElementById('aisensyWebhookUrl').value = config.config.webhookUrl || '';
+                }
+
+                const logs = await API.call('getAiSensyLogs');
+                const aisensyLogsBody = document.getElementById('aisensyLogsBody');
+                aisensyLogsBody.innerHTML = logs.logs ? logs.logs.map(log => `
+                    <tr class="hover:bg-surface-container-low transition-colors">
+                        <td class="px-lg py-md text-sm text-on-surface-variant">${UI.formatDate(log.timestamp)}</td>
+                        <td class="px-lg py-md">${log.phone || '-'}</td>
+                        <td class="px-lg py-md">${UI.getStatusBadge(log.status)}</td>
+                        <td class="px-lg py-md text-sm">${log.message || '-'}</td>
+                    </tr>
+                `).join('') : '<tr><td colspan="4" class="px-lg py-md text-center text-on-surface-variant">No logs</td></tr>';
+
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        // Telegram
+        async function loadTelegramConfig() {
+            try {
+                const config = await API.call('getTelegramConfig');
+                if (config.config) {
+                    document.getElementById('telegramBotToken').value = config.config.botToken || '';
+                    document.getElementById('telegramChatId').value = config.config.chatId || '';
+                }
+
+                const logs = await API.call('getTelegramLogs');
+                const telegramLogsBody = document.getElementById('telegramLogsBody');
+                telegramLogsBody.innerHTML = logs.logs ? logs.logs.map(log => `
+                    <tr class="hover:bg-surface-container-low transition-colors">
+                        <td class="px-lg py-md text-sm text-on-surface-variant">${UI.formatDate(log.timestamp)}</td>
+                        <td class="px-lg py-md">${UI.getStatusBadge(log.status)}</td>
+                        <td class="px-lg py-md text-sm">${log.message || '-'}</td>
+                    </tr>
+                `).join('') : '<tr><td colspan="3" class="px-lg py-md text-center text-on-surface-variant">No logs</td></tr>';
+
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        // Users
+        async function loadUsers() {
+            try {
+                const data = await API.call('getUsers');
+                State.users = data.users || [];
+
+                const usersBody = document.getElementById('usersBody');
+                usersBody.innerHTML = State.users.map(user => `
+                    <tr class="hover:bg-surface-container-low transition-colors">
+                        <td class="px-lg py-md font-medium">${user.name}</td>
+                        <td class="px-lg py-md">${user.email}</td>
+                        <td class="px-lg py-md">${UI.getStatusBadge(user.role)}</td>
+                        <td class="px-lg py-md">${UI.getStatusBadge(user.status)}</td>
+                        <td class="px-lg py-md text-sm text-on-surface-variant">${UI.formatDate(user.createdAt)}</td>
+                        <td class="px-lg py-md">
+                            <button class="text-secondary hover:text-primary transition-colors mr-2" onclick="editUser('${user.id}')">
+                                <span class="material-symbols-outlined text-sm">edit</span>
+                            </button>
+                            <button class="text-error hover:text-red-700 transition-colors" onclick="deleteUser('${user.id}')">
+                                <span class="material-symbols-outlined text-sm">delete</span>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        // Settings
+        async function loadSettings() {
+            try {
+                const data = await API.call('getSystemSettings');
+                State.settings = data.settings || [];
+
+                renderSettingsTab('general');
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        async function renderSettingsTab(tabName) {
+            const content = document.getElementById('settingsContent');
+            
+            switch(tabName) {
+                case 'general':
+                    content.innerHTML = State.settings.filter(s => s.category === 'general').map(setting => `
+                        <div class="mb-md">
+                            <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">${setting.key}</label>
+                            <input type="text" class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" value="${setting.value}" data-setting-key="${setting.key}">
+                        </div>
+                    `).join('') || '<p class="text-on-surface-variant text-center py-8">No general settings</p>';
+                    break;
+                case 'server':
+                    content.innerHTML = State.settings.filter(s => s.category === 'server').map(setting => `
+                        <div class="mb-md">
+                            <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">${setting.key}</label>
+                            <input type="text" class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" value="${setting.value}" data-setting-key="${setting.key}">
+                        </div>
+                    `).join('') || '<p class="text-on-surface-variant text-center py-8">No server settings</p>';
+                    break;
+                case 'features':
+                    content.innerHTML = State.settings.filter(s => s.category === 'feature').map(setting => `
+                        <div class="flex items-center justify-between py-3 border-b border-outline-variant/20">
+                            <div>
+                                <p class="font-medium">${setting.key}</p>
+                                <p class="text-sm text-on-surface-variant">${setting.description || ''}</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" ${setting.value === 'true' ? 'checked' : ''} data-setting-key="${setting.key}">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    `).join('') || '<p class="text-on-surface-variant text-center py-8">No feature flags</p>';
+                    break;
+                case 'node':
+                    try {
+                        const nodeData = await API.call('getNodeApiUrl');
+                        content.innerHTML = `
+                            <div class="mb-md">
+                                <label class="text-label-md text-on-surface-variant uppercase tracking-wider mb-xs block">Node API URL</label>
+                                <input type="text" class="w-full bg-surface-container border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-secondary/50 transition-all outline-none" id="nodeApiUrl" value="${nodeData.nodeApiUrl || ''}">
+                            </div>
+                            <button class="px-md py-sm rounded-xl bg-secondary text-on-secondary font-label-md shadow-lg shadow-secondary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2" onclick="saveNodeApiUrl()">
+                                <span class="material-symbols-outlined text-[18px]">save</span>
+                                Save URL
+                            </button>
+                            <button class="px-md py-sm rounded-xl border border-outline-variant bg-white font-label-md text-secondary hover:bg-surface-container transition-all flex items-center justify-center gap-2 mt-sm" onclick="testNodeBackend()">
+                                <span class="material-symbols-outlined text-[18px]">science</span>
+                                Test Connection
+                            </button>
+                        `;
+                    } catch (error) {
+                        content.innerHTML = '<p class="text-on-surface-variant text-center py-8">Error loading Node backend settings</p>';
+                    }
+                    break;
+            }
+        }
+
+        // Audit Logs
+        async function loadAuditLogs() {
+            try {
+                const payload = {
+                    action: document.getElementById('auditActionFilter').value,
+                    entityType: document.getElementById('auditEntityTypeFilter').value,
+                    userId: document.getElementById('auditUserFilter').value,
+                    limit: parseInt(document.getElementById('auditLimitFilter').value)
+                };
+                const data = await API.call('getAuditLogs', payload);
+                State.auditLogs = data.logs || [];
+
+                const auditLogsBody = document.getElementById('auditLogsBody');
+                auditLogsBody.innerHTML = State.auditLogs.map(log => `
+                    <tr class="hover:bg-surface-container-low transition-colors">
+                        <td class="px-lg py-md text-sm text-on-surface-variant">${UI.formatDate(log.timestamp)}</td>
+                        <td class="px-lg py-md">${log.userId || '-'}</td>
+                        <td class="px-lg py-md">${log.action}</td>
+                        <td class="px-lg py-md">${log.entityType || '-'}</td>
+                        <td class="px-lg py-md">${log.entityId || '-'}</td>
+                        <td class="px-lg py-md text-sm">${log.changes ? JSON.stringify(log.changes).substring(0, 100) + '...' : '-'}</td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        // Sync Monitor
+        async function loadSyncStatus() {
+            try {
+                const status = await API.call('getSyncStatus');
+                document.getElementById('syncAutoStatus').textContent = status.syncSettings.auto_sync_enabled || 'Disabled';
+                document.getElementById('syncAutoSendStatus').textContent = status.syncSettings.auto_send_enabled || 'Disabled';
+                document.getElementById('syncLastSync').textContent = status.syncSettings.last_sync ? UI.formatDate(status.syncSettings.last_sync) : 'Never';
+
+                const history = await API.call('getSyncHistory', { limit: 50 });
+                State.syncHistory = history.history || [];
+                document.getElementById('syncFailedCount').textContent = State.syncHistory.filter(h => h.status === 'Failed').length;
+
+                const syncHistoryBody = document.getElementById('syncHistoryBody');
+                syncHistoryBody.innerHTML = State.syncHistory.map(sync => `
+                    <tr class="hover:bg-surface-container-low transition-colors">
+                        <td class="px-lg py-md text-sm text-on-surface-variant">${UI.formatDate(sync.timestamp)}</td>
+                        <td class="px-lg py-md">${sync.type}</td>
+                        <td class="px-lg py-md">${UI.getStatusBadge(sync.status)}</td>
+                        <td class="px-lg py-md">${sync.records || 0}</td>
+                        <td class="px-lg py-md">${sync.duration || '-'}</td>
+                        <td class="px-lg py-md">
+                            ${sync.status === 'Failed' ? `<button class="text-secondary hover:text-primary transition-colors" onclick="retrySync('${sync.id}')">Retry</button>` : '-'}
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        // System Health
+        async function loadSystemHealth() {
+            try {
+                const health = await API.call('getSystemHealth');
+                document.getElementById('healthNodeStatus').textContent = health.health?.node || 'Unknown';
+                document.getElementById('healthDatabaseStatus').textContent = health.health?.database || 'Unknown';
+                document.getElementById('healthUptime').textContent = health.health?.uptime ? Math.floor(health.health.uptime / 3600) + 'h' : '-';
+
+                const metrics = await API.call('getSystemMetrics');
+                document.getElementById('healthIntegrations').textContent = metrics.metrics?.integrations?.length || 0;
+
+                const systemMetrics = document.getElementById('systemMetrics');
+                systemMetrics.innerHTML = `
+                    <div class="space-y-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-on-surface-variant">Uptime</span>
+                            <span class="font-medium">${metrics.metrics?.uptime ? Math.floor(metrics.metrics.uptime / 3600) + ' hours' : '-'}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-on-surface-variant">Memory Usage</span>
+                            <span class="font-medium">${metrics.metrics?.memory || '-'}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-on-surface-variant">CPU Usage</span>
+                            <span class="font-medium">${metrics.metrics?.cpu || '-'}</span>
+                        </div>
+                    </div>
+                `;
+
+                const dbStats = await API.call('getDatabaseStats');
+                const databaseStats = document.getElementById('databaseStats');
+                databaseStats.innerHTML = `
+                    <div class="space-y-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-on-surface-variant">Total Leads</span>
+                            <span class="font-medium">${UI.formatNumber(dbStats.stats?.totalLeads || 0)}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-on-surface-variant">Total Columns</span>
+                            <span class="font-medium">${dbStats.stats?.totalColumns || 0}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-on-surface-variant">Sheet Name</span>
+                            <span class="font-medium">${dbStats.stats?.sheetName || '-'}</span>
+                        </div>
+                    </div>
+                `;
+
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const screen = item.dataset.screen;
+                    if (screen) switchScreen(screen);
+                });
+            });
+
+            // Modal close
+            document.getElementById('modalClose').addEventListener('click', UI.closeModal);
+            document.getElementById('modalCancel').addEventListener('click', UI.closeModal);
+            document.getElementById('modalOverlay').addEventListener('click', (e) => {
+                if (e.target.id === 'modalOverlay') UI.closeModal();
+            });
+
+            // Refresh button
+            document.getElementById('refreshBtn').addEventListener('click', async () => {
+                await loadScreenData(State.currentScreen);
+            });
+
+            // Leads filters
+            ['leadSearch', 'leadSourceFilter', 'leadStatusFilter', 'leadAssignedFilter'].forEach(id => {
+                document.getElementById(id).addEventListener('change', loadLeads);
+                document.getElementById(id).addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter') loadLeads();
+                });
+            });
+
+            // Select all leads
+            document.getElementById('selectAllLeads').addEventListener('change', (e) => {
+                document.querySelectorAll('.lead-checkbox').forEach(cb => {
+                    cb.checked = e.target.checked;
+                    if (cb.checked) {
+                        State.selectedLeads.add(cb.dataset.leadId);
+                    } else {
+                        State.selectedLeads.delete(cb.dataset.leadId);
+                    }
+                });
+                document.getElementById('leadsSelected').textContent = State.selectedLeads.size;
+            });
+
+            // Settings tabs
+            document.querySelectorAll('.settings-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.settings-tab').forEach(t => {
+                        t.classList.remove('active', 'text-secondary', 'border-secondary');
+                        t.classList.add('text-on-surface-variant', 'border-transparent');
+                    });
+                    tab.classList.add('active', 'text-secondary', 'border-secondary');
+                    tab.classList.remove('text-on-surface-variant', 'border-transparent');
+                    renderSettingsTab(tab.dataset.tab);
+                });
+            });
+
+            // Audit logs filters
+            ['auditActionFilter', 'auditEntityTypeFilter', 'auditUserFilter', 'auditLimitFilter'].forEach(id => {
+                document.getElementById(id).addEventListener('change', loadAuditLogs);
+            });
+
+            // Load initial screen
+            loadDashboard();
+        });
+
+        // Placeholder functions for actions
+        async function editLead(leadId) {
+            UI.showAlert('Edit lead functionality coming soon', 'info');
+        }
+
+        async function testIntegration(id) {
+            try {
+                await API.call('testIntegration', { id });
+                UI.showAlert('Integration test successful', 'success');
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        async function deleteIntegration(id) {
+            if (confirm('Are you sure you want to delete this integration?')) {
+                try {
+                    await API.call('deleteIntegration', { id });
+                    UI.showAlert('Integration deleted successfully', 'success');
+                    loadIntegrations();
+                } catch (error) {
+                    UI.showAlert(error.message, 'error');
+                }
+            }
+        }
+
+        async function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            UI.showAlert('Copied to clipboard', 'success');
+        }
+
+        async function saveNodeApiUrl() {
+            try {
+                const url = document.getElementById('nodeApiUrl').value;
+                await API.call('setNodeApiUrl', { nodeApiUrl: url });
+                UI.showAlert('Node API URL saved successfully', 'success');
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        async function testNodeBackend() {
+            try {
+                await API.call('testNodeBackend');
+                UI.showAlert('Node backend connection successful', 'success');
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+
+        async function retrySync(syncId) {
+            try {
+                await API.call('retryFailedSync', { syncId });
+                UI.showAlert('Sync retry initiated', 'success');
+                loadSyncStatus();
+            } catch (error) {
+                UI.showAlert(error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

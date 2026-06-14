@@ -100,8 +100,8 @@ docker-compose restart
 Before deploying, gather:
 
 1. **Zoho CRM**
-   - Client ID: `1000.8N2NV1KRHLXAF5ETDAPFDKVDEKY4KG` ✓
-   - Client Secret: `46f324f184d8c34acb60fa50bfb94e00c725284afd` ✓
+   - Client ID: `[FROM ZOHO API CONSOLE]`
+   - Client Secret: `[FROM ZOHO API CONSOLE]`
    - Refresh Token: [Generate from Zoho Console]
    - Region: `.in` (India) or `.com` (Global)
 
@@ -112,8 +112,8 @@ Before deploying, gather:
    - Username: `OneX CRM`
 
 3. **Telegram Bot (Optional)**
-   - Token: `8792849495:AAEEoUHlvtvECkwpUJ5Fem9UfmNUXSI7ozE` ✓
-   - Chat ID: `5740904900` ✓
+   - Token: [Generate from @BotFather on Telegram]
+   - Chat ID: [Your Telegram chat ID]
 
 4. **Gmail Alerts (Optional)**
    - Admin Email: Your Gmail
@@ -181,8 +181,8 @@ Generic:     https://your-api.example.com/webhook?source=PLATFORM_NAME
    - Click **Test Connection**
 
 4. **Zoho Credentials**
-   - Client ID: `1000.8N2NV1KRHLXAF5ETDAPFDKVDEKY4KG`
-   - Client Secret: `46f324f184d8c34acb60fa50bfb94e00c725284afd`
+   - Client ID: `[FROM ZOHO API CONSOLE]`
+   - Client Secret: `[FROM ZOHO API CONSOLE]`
    - Refresh Token: [Your generated token]
    - Zoho Region: `.in` (India) or `.com`
    - Click **Save & Sync to Backend**
@@ -194,8 +194,8 @@ Generic:     https://your-api.example.com/webhook?source=PLATFORM_NAME
    - Click **Save & Test**
 
 6. **Telegram Alerts**
-   - Bot Token: `8792849495:AAEEoUHlvtvECkwpUJ5Fem9UfmNUXSI7ozE`
-   - Chat ID: `5740904900`
+   - Bot Token: [Your Telegram bot token from @BotFather]
+   - Chat ID: [Your Telegram chat ID]
    - Click **Save**
 
 7. **Email Alerts**

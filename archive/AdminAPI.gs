@@ -41,6 +41,7 @@ function handleAdminAction(payload) {
       case 'generateWebhookUrl':return jsonR(generateWebhookUrl(payload));
       case 'getNodeBackendStatus': return jsonR(getNodeBackendStatusAction());
       case 'testNodeConnection': return jsonR(testNodeConnectionAction());
+      case 'testNodeBackendConnection': return jsonR(testNodeBackendConnectionAction(payload));
       case 'saveZohoCredentials': return jsonR(saveZohoCredentialsAction(payload));
       case 'saveAiSensySettings': return jsonR(saveAiSensySettingsAction(payload));
       case 'saveTelegramConfig': return jsonR(saveTelegramConfigAction(payload));
@@ -247,11 +248,23 @@ function getSettingsData() {
   var cfg=Config.get();
   function mask(v){ return (!v||!v.trim())?'':'***'+v.slice(-4); }
   return {
-    aiSensyApiKey:mask(cfg.aiSensyApiKey), aiSensyCampaign:cfg.aiSensyCampaign,
-    aiSensyUsername:cfg.aiSensyUsername, adminEmail:cfg.adminEmail,
-    webhookSecret:mask(cfg.webhookSecret), whatsappEnabled:cfg.whatsappEnabled,
-    deduplicationEnabled:cfg.deduplicationEnabled, notificationsEnabled:cfg.notificationsEnabled,
-    emailAlerts:cfg.emailAlerts, waAlerts:cfg.waAlerts, alertPhone:cfg.alertPhone,
+    NODE_API_URL: cfg.nodeApiUrl || '',
+    ZOHO_CLIENT_ID: cfg.ZOHO_CLIENT_ID || '',
+    ZOHO_CLIENT_SECRET: mask(cfg.ZOHO_CLIENT_SECRET),
+    ZOHO_REFRESH_TOKEN: mask(cfg.ZOHO_REFRESH_TOKEN),
+    ZOHO_DOMAIN: cfg.ZOHO_DOMAIN || 'https://accounts.zoho.in',
+    aiSensyApiKey: mask(cfg.aiSensyApiKey),
+    aiSensyCampaign: cfg.aiSensyCampaign,
+    aiSensyDestinationPhone: cfg.aiSensyDestinationPhone,
+    aiSensyUsername: cfg.aiSensyUsername,
+    adminEmail: cfg.adminEmail,
+    webhookSecret: mask(cfg.webhookSecret),
+    whatsappEnabled: cfg.whatsappEnabled,
+    deduplicationEnabled: cfg.deduplicationEnabled,
+    notificationsEnabled: cfg.notificationsEnabled,
+    emailAlerts: cfg.emailAlerts,
+    waAlerts: cfg.waAlerts,
+    alertPhone: cfg.alertPhone,
     templateParams: cfg.templateParams
   };
 }
@@ -259,11 +272,43 @@ function getSettingsData() {
 function saveSettingsData(payload) {
   var s=payload.settings;
   if (!s||typeof s!=='object') return { success:false, error:'No settings object' };
-  ['aiSensyApiKey','webhookSecret'].forEach(function(k){
+  // Don't save masked values (***xxxx)
+  ['aiSensyApiKey','webhookSecret','ZOHO_CLIENT_SECRET','ZOHO_REFRESH_TOKEN'].forEach(function(k){
     if (s[k]&&(s[k].indexOf('***')===0||s[k]==='')) delete s[k];
   });
   Config.saveSettings(s);
   AuditLogger.log('Admin','Settings Saved','','',JSON.stringify(s).slice(0,200));
+
+  // Auto-sync settings to Node backend if Node API URL is configured
+  var nodeUrl = Config.get().nodeApiUrl;
+  if (nodeUrl) {
+    try {
+      // Sync Zoho credentials to backend (including domain changes)
+      if (s.ZOHO_CLIENT_ID !== undefined || s.ZOHO_CLIENT_SECRET !== undefined || s.ZOHO_REFRESH_TOKEN !== undefined || s.ZOHO_DOMAIN !== undefined) {
+        var latest = Config.get();
+        var cid = s.ZOHO_CLIENT_ID !== undefined ? s.ZOHO_CLIENT_ID : latest.ZOHO_CLIENT_ID;
+        var sec = s.ZOHO_CLIENT_SECRET !== undefined ? s.ZOHO_CLIENT_SECRET : latest.ZOHO_CLIENT_SECRET;
+        var rft = s.ZOHO_REFRESH_TOKEN !== undefined ? s.ZOHO_REFRESH_TOKEN : latest.ZOHO_REFRESH_TOKEN;
+        var domain = s.ZOHO_DOMAIN !== undefined ? s.ZOHO_DOMAIN : (latest.ZOHO_DOMAIN || 'https://accounts.zoho.in');
+        var tokenUrl = domain + '/oauth/v2/token';
+        var apiUrl = domain.replace('accounts.', 'www.') + '/crm/v2/Leads';
+        syncZohoCredentialsToBackend(cid, sec, rft, tokenUrl, apiUrl);
+      }
+      // Sync AISensy credentials to backend
+      if (s.aiSensyApiKey !== undefined || s.aiSensyCampaign !== undefined || s.aiSensyDestinationPhone !== undefined || s.aiSensyUsername !== undefined) {
+        var latest = Config.get();
+        var aKey = s.aiSensyApiKey !== undefined ? s.aiSensyApiKey : latest.aiSensyApiKey;
+        var aCamp = s.aiSensyCampaign !== undefined ? s.aiSensyCampaign : latest.aiSensyCampaign;
+        var aDest = s.aiSensyDestinationPhone !== undefined ? s.aiSensyDestinationPhone : latest.aiSensyDestinationPhone;
+        var aUser = s.aiSensyUsername !== undefined ? s.aiSensyUsername : latest.aiSensyUsername;
+        syncAiSensyCredentialsToBackend(aKey, aCamp, aDest, aUser);
+      }
+    } catch (syncErr) {
+      console.error('Failed to sync settings to Render backend:', syncErr.toString());
+      return { success: true, warning: 'Saved locally, but failed to sync to Node backend: ' + syncErr.message };
+    }
+  }
+
   return { success:true };
 }
 
@@ -393,7 +438,10 @@ function exportLeads(params) {
     var l=result.leads[i];
     rows.push([esc(l.leadId),esc(l.timestamp),esc(l.source),esc(l.name),esc(l.phone),esc(l.email),
       esc(l.propertyId),esc(l.propertyTitle),esc(l.message),esc(l.waStatus),esc(l.status),
-      esc(l.assignedTo),esc(l.notes),esc(l.createdAt),esc(l.lastUpdated)].join(','));
+      esc(l.assignedTo),esc(l.notes),esc(l.createdAt),esc(l.lastUpdated),
+      esc(l.budget),esc(l.location),esc(l.requirements),esc(l.timeline),
+      esc(l.callMade),esc(l.meetingScheduled),esc(l.siteVisitDone),
+      esc(l.followupDue),esc(l.nextCall),esc(l.meetingDate)].join(','));
   }
   return { csv:rows.join('\n'), count:result.leads.length };
 }
@@ -401,12 +449,30 @@ function exportLeads(params) {
 // ── TEST AISENSY ──────────────────────────────────────────────────────────────
 
 function testAiSensyAction(payload) {
-  var cfg=Config.get();
-  var phone=PhoneNormalizer.normalize((payload.phone||'9999999999').toString());
-  if (!phone||!/^\d{10,12}$/.test(phone)) return { success:false, message:'Invalid phone: '+payload.phone };
+  var data = payload.data || {};
+  var apiKey = data.apiKey || Config.get().aiSensyApiKey;
+  var campaign = data.campaign || Config.get().aiSensyCampaign;
+  var username = data.userName || Config.get().aiSensyUsername || 'OneX CRM';
+  var phone = PhoneNormalizer.normalize((payload.phone || data.phone || '9999999999').toString());
+
+  if (!apiKey || !campaign) {
+    return { success: false, message: 'API Key and Campaign Name are required to test AISensy connection.' };
+  }
+
+  // Mask check
+  if (apiKey.indexOf('***') === 0) apiKey = Config.get().aiSensyApiKey;
+
+  var tempCfg = {
+    aiSensyApiKey: apiKey,
+    aiSensyCampaign: campaign,
+    aiSensyUsername: username,
+    companyName: Config.get().companyName
+  };
+
+  if (!phone || !/^\d{10,12}$/.test(phone)) return { success:false, message:'Invalid phone: ' + (payload.phone || data.phone) };
   var lead={ leadId:'TEST-'+Date.now(), name:(payload.name||'Test User').toString().trim(),
-    phone:phone, source:'Test', propertyTitle:'Test - '+cfg.companyName };
-  var result=AiSensy.send(lead,cfg);
+    phone:phone, source:'Test', propertyTitle:'Test - '+tempCfg.companyName };
+  var result=AiSensy.send(lead,tempCfg);
   AuditLogger.log('Admin','AiSensy Test Send','phone','',phone);
   return result;
 }
@@ -447,6 +513,45 @@ function testNodeConnectionAction() {
 }
 
 /**
+ * Test Node Backend Connection with given credentials
+ */
+function testNodeBackendConnectionAction(payload) {
+  try {
+    var data = payload.data || {};
+    var nodeUrl = data.nodeUrl || Config.get().nodeApiUrl || PropertiesService.getScriptProperties().getProperty('NODE_API_URL') || '';
+    var zohoClientId = data.clientId || '';
+    var zohoRefreshToken = data.refreshToken || '';
+    
+    // Test if backend is reachable
+    if (!nodeUrl) {
+      return { success: false, message: 'Node API URL not configured' };
+    }
+    
+    try {
+      var response = UrlFetchApp.fetch(nodeUrl.replace(/\/$/, '') + '/api/admin/health', {
+        method: 'get',
+        muteHttpExceptions: true
+      });
+      var health = JSON.parse(response.getContentText());
+      
+      var msg = '✓ Backend Connected';
+      if (health.integrations && health.integrations.zoho && health.integrations.zoho.configured) {
+        msg += ' | Zoho: Connected';
+      }
+      if (health.integrations && health.integrations.aisensy && health.integrations.aisensy.configured) {
+        msg += ' | AISensy: Connected';
+      }
+      
+      return { success: true, message: msg };
+    } catch (e) {
+      return { success: false, message: 'Cannot reach backend: ' + e.message };
+    }
+  } catch (err) {
+    return { success: false, message: err.toString() };
+  }
+}
+
+/**
  * Save Zoho credentials to backend
  */
 function saveZohoCredentialsAction(payload) {
@@ -456,6 +561,12 @@ function saveZohoCredentialsAction(payload) {
     var refreshToken = payload.refreshToken || '';
     var tokenUrl = payload.tokenUrl || 'https://accounts.zoho.in/oauth/v2/token';
     var apiUrl = payload.apiUrl || 'https://www.zohoapis.in/crm/v2/Leads';
+
+    // Strip masked values - fall back to current config so masked fields don't wipe backend
+    var current = Config.get();
+    if (clientId.indexOf('***') === 0) clientId = current.ZOHO_CLIENT_ID || '';
+    if (clientSecret.indexOf('***') === 0) clientSecret = current.ZOHO_CLIENT_SECRET || '';
+    if (refreshToken.indexOf('***') === 0) refreshToken = current.ZOHO_REFRESH_TOKEN || '';
 
     var result = syncZohoCredentialsToBackend(clientId, clientSecret, refreshToken, tokenUrl, apiUrl);
     
@@ -664,6 +775,23 @@ function saveIntegrationsData(payload) {
   });
   Config.saveIntegrations(ig);
   AuditLogger.log('Admin','Integrations Updated','','',Object.keys(ig).join(','));
+
+  // Sync to Node backend if node URL is configured and Telegram is updated
+  var nodeUrl = Config.get().nodeApiUrl;
+  if (nodeUrl) {
+    try {
+      if (ig.telegramBotToken !== undefined || ig.telegramChatId !== undefined) {
+        var latest = Config.get().integrations || {};
+        var tok = ig.telegramBotToken !== undefined ? ig.telegramBotToken : latest.telegramBotToken;
+        var cid = ig.telegramChatId !== undefined ? ig.telegramChatId : latest.telegramChatId;
+        syncTelegramConfigToBackend(tok, cid);
+      }
+    } catch (syncErr) {
+      console.error('Failed to sync integrations to Render backend:', syncErr.toString());
+      return { success: true, warning: 'Saved locally, but failed to sync to Node backend: ' + syncErr.message };
+    }
+  }
+
   return { success:true };
 }
 
@@ -679,6 +807,7 @@ function testIntegrationAction(payload) {
       case 'telegram':   return testTelegramBot(data);
       case 'smtp':       return testSmtpEmail(data);
       case 'meta':       return testMetaAds(data);
+      case 'zoho':       return testZohoConnection(data);
       case 'housing':    return { success:true, message:'Housing webhook receives leads automatically — no separate test needed. Send a test lead from Housing dashboard.' };
       case 'magicbricks':return { success:true, message:'MagicBricks webhook receives leads automatically — no separate test needed.' };
       case '99acres':    return { success:true, message:'99acres webhook receives leads automatically — no separate test needed.' };
@@ -778,4 +907,58 @@ function updateLeadStatusKanban(payload) {
   AuditLogger.log('Admin','Kanban Move','status','',newStatus);
   AppLogger.write(leadId,'','', 'Status Changed','SUCCESS','','Moved to '+newStatus+' via Kanban');
   return { success:true };
+}
+
+// ── TEST ZOHO CREDENTIALS ──────────────────────────────────────────────────
+
+function testZohoConnection(data) {
+  var cfg = Config.get();
+
+  // If Node backend is configured, proxy the test through it
+  var nodeUrl = cfg.nodeApiUrl;
+  if (nodeUrl) {
+    try {
+      var resp = UrlFetchApp.fetch(nodeUrl + '/api/admin/test-zoho', {
+        method: 'post',
+        contentType: 'application/json',
+        payload: JSON.stringify({}),
+        muteHttpExceptions: true
+      });
+      var body = JSON.parse(resp.getContentText());
+      return { success: body.success, message: body.message || 'Zoho test completed' };
+    } catch (err) {
+      return { success: false, message: 'Node backend test failed: ' + err.toString() + '. Try saving credentials in GAS directly.' };
+    }
+  }
+
+  // Fallback: direct test from GAS (requires credentials saved in Script Properties)
+  var clientId = data.clientId || cfg.ZOHO_CLIENT_ID;
+  var clientSecret = data.clientSecret || cfg.ZOHO_CLIENT_SECRET;
+  var refreshToken = data.refreshToken || cfg.ZOHO_REFRESH_TOKEN;
+  var domain = data.tokenUrl ? data.tokenUrl.replace('/oauth/v2/token','') : (cfg.ZOHO_DOMAIN || 'https://accounts.zoho.in');
+  var tokenUrl = domain + '/oauth/v2/token';
+
+  if (!clientId || !clientSecret || !refreshToken) {
+    return { success: false, message: 'Zoho credentials not configured. Save them first or use Connect Zoho OAuth.' };
+  }
+
+  try {
+    var resp = UrlFetchApp.fetch(tokenUrl, {
+      method: 'post',
+      contentType: 'application/x-www-form-urlencoded',
+      payload: 'grant_type=refresh_token&client_id=' + encodeURIComponent(clientId) +
+               '&client_secret=' + encodeURIComponent(clientSecret) +
+               '&refresh_token=' + encodeURIComponent(refreshToken),
+      muteHttpExceptions: true
+    });
+    var code = resp.getResponseCode();
+    var body = JSON.parse(resp.getContentText());
+
+    if (code === 200 && body.access_token) {
+      return { success: true, message: 'Zoho OAuth token refreshed successfully. CRM access confirmed.' };
+    }
+    return { success: false, message: (body.error || 'HTTP ' + code) };
+  } catch (err) {
+    return { success: false, message: 'Zoho test failed: ' + err.toString() };
+  }
 }

@@ -157,4 +157,21 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-module.exports = { createLeadWithRetry };
+/**
+ * Tests Zoho CRM connection by attempting to obtain an access token.
+ * Does NOT create any records — purely a connectivity check.
+ * @returns {Promise<{success: boolean, message: string}>}
+ */
+async function testConnection() {
+  try {
+    const token = await getAccessToken();
+    if (token) {
+      return { success: true, message: 'Zoho OAuth token obtained successfully' };
+    }
+    return { success: false, message: 'Failed to obtain Zoho access token' };
+  } catch (err) {
+    return { success: false, message: 'Zoho connection failed: ' + (err.message || err.toString()) };
+  }
+}
+
+module.exports = { createLeadWithRetry, testConnection };

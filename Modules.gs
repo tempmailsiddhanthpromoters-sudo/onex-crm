@@ -138,14 +138,8 @@ var AiSensy = {
         return { success: false, responseCode: 0, message: 'AiSensy API key not configured' };
       }
 
-      // Source-specific campaign override
+      // Campaign already overridden by Webhook.gs source-specific config if applicable
       var campaign = cfg.aiSensyCampaign || '';
-      if (lead.source === 'Housing' && cfg.housingCampaign && cfg.housingCampaign.trim() !== '') {
-        campaign = cfg.housingCampaign;
-      } else if (lead.source === '99acres' && cfg.acres99Campaign && cfg.acres99Campaign.trim() !== '') {
-        campaign = cfg.acres99Campaign;
-      }
-
       if (!campaign || campaign.trim() === '') {
         return { success: false, responseCode: 0, message: 'Campaign name not configured' };
       }

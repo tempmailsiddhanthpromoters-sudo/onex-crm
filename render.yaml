@@ -9,8 +9,8 @@ services:
     region: singapore
     
     # Build configuration
-    buildCommand: npm install --prefix onex-webhook && npm run build --prefix onex-webhook 2>/dev/null || true
-    startCommand: node onex-webhook/src/index.js
+    buildCommand: npm install --prefix onex-webhook
+    startCommand: node onex-webhook/src/indexEnhanced.js
     
     # Environment variables (configure in Render dashboard)
     env:

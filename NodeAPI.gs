@@ -40,8 +40,7 @@ var NodeAPI = {
           'Content-Type': 'application/json',
           'User-Agent': 'OneX-CRM-GAS/1.0'
         },
-        muteHttpExceptions: true,
-        timeout: 30
+        muteHttpExceptions: true
       };
 
       if (payload) {
@@ -145,6 +144,14 @@ var NodeAPI = {
   },
 
   /**
+   * POST /api/leads
+   * Synchronize a normalized lead with the Node backend
+   */
+  pushLead: function(lead) {
+    return NodeAPI._request('POST', '/api/leads', lead);
+  },
+
+  /**
    * POST /api/admin/leads/:id/resync-zoho
    * Manually retry Zoho sync for a lead
    */
@@ -158,7 +165,7 @@ var NodeAPI = {
    */
   resendWhatsApp: function(leadId) {
     return NodeAPI._request('POST', '/api/admin/leads/' + leadId + '/resend-whatsapp');
-  },
+  }
 };
 
 /**

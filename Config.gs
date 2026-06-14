@@ -51,6 +51,7 @@ var Config = {
     AISENSY_API_KEY:    'AISENSY_API_KEY',
     AISENSY_CAMPAIGN:   'AISENSY_CAMPAIGN',
     AISENSY_USERNAME:   'AISENSY_USERNAME',
+    AISENSY_DEST_PHONE: 'AISENSY_DEST_PHONE',
     SHEET_ID:           'SHEET_ID',
     LEAD_COUNTER:       'LEAD_COUNTER',
     UNIT_COUNTER:       'UNIT_COUNTER',
@@ -61,7 +62,11 @@ var Config = {
     SOURCES_JSON:       'SOURCES_JSON',
     TEAMS_JSON:         'TEAMS_JSON',
     INTEGRATIONS_JSON:  'INTEGRATIONS_JSON',
-    NODE_API_URL:       'NODE_API_URL'
+    NODE_API_URL:       'NODE_API_URL',
+    ZOHO_CLIENT_ID:     'ZOHO_CLIENT_ID',
+    ZOHO_CLIENT_SECRET: 'ZOHO_CLIENT_SECRET',
+    ZOHO_REFRESH_TOKEN: 'ZOHO_REFRESH_TOKEN',
+    ZOHO_DOMAIN:        'ZOHO_DOMAIN'
   },
 
   DEFAULTS: {
@@ -85,8 +90,13 @@ var Config = {
       aiSensyApiKey:   props.getProperty(Config.PROP_KEYS.AISENSY_API_KEY) || '',
       aiSensyCampaign: props.getProperty(Config.PROP_KEYS.AISENSY_CAMPAIGN)|| '',
       aiSensyUsername: props.getProperty(Config.PROP_KEYS.AISENSY_USERNAME)|| '',
+      aiSensyDestinationPhone: props.getProperty(Config.PROP_KEYS.AISENSY_DEST_PHONE) || '',
       adminEmail:      props.getProperty(Config.PROP_KEYS.ADMIN_EMAIL)     || '',
       nodeApiUrl:      props.getProperty(Config.PROP_KEYS.NODE_API_URL)    || '',
+      ZOHO_CLIENT_ID:  props.getProperty(Config.PROP_KEYS.ZOHO_CLIENT_ID)  || '',
+      ZOHO_CLIENT_SECRET: props.getProperty(Config.PROP_KEYS.ZOHO_CLIENT_SECRET) || '',
+      ZOHO_REFRESH_TOKEN: props.getProperty(Config.PROP_KEYS.ZOHO_REFRESH_TOKEN) || '',
+      ZOHO_DOMAIN:     props.getProperty(Config.PROP_KEYS.ZOHO_DOMAIN) || 'https://accounts.zoho.in',
 
       whatsappEnabled:      settings.whatsappEnabled      !== false,
       deduplicationEnabled: settings.deduplicationEnabled !== false,
@@ -129,13 +139,25 @@ var Config = {
       aiSensyApiKey:   Config.PROP_KEYS.AISENSY_API_KEY,
       aiSensyCampaign: Config.PROP_KEYS.AISENSY_CAMPAIGN,
       aiSensyUsername: Config.PROP_KEYS.AISENSY_USERNAME,
+      aiSensyDestinationPhone: Config.PROP_KEYS.AISENSY_DEST_PHONE,
       adminEmail:      Config.PROP_KEYS.ADMIN_EMAIL,
-      webhookSecret:   Config.PROP_KEYS.WEBHOOK_SECRET
+      webhookSecret:   Config.PROP_KEYS.WEBHOOK_SECRET,
+      NODE_API_URL:    Config.PROP_KEYS.NODE_API_URL,
+      ZOHO_CLIENT_ID:  Config.PROP_KEYS.ZOHO_CLIENT_ID,
+      ZOHO_CLIENT_SECRET: Config.PROP_KEYS.ZOHO_CLIENT_SECRET,
+      ZOHO_REFRESH_TOKEN: Config.PROP_KEYS.ZOHO_REFRESH_TOKEN,
+      ZOHO_DOMAIN:     Config.PROP_KEYS.ZOHO_DOMAIN
     };
     var secretKeys = Object.keys(secretMap);
     for (var i=0; i<secretKeys.length; i++) {
       var k = secretKeys[i];
-      if (updates[k] !== undefined && updates[k] !== '') props.setProperty(secretMap[k], updates[k].toString());
+      if (updates[k] !== undefined) {
+        if (updates[k] === '') {
+          props.deleteProperty(secretMap[k]);
+        } else {
+          props.setProperty(secretMap[k], updates[k].toString());
+        }
+      }
     }
     var existing = {};
     try { existing = JSON.parse(props.getProperty(Config.PROP_KEYS.SETTINGS_JSON)||'{}'); } catch(e){}
@@ -176,8 +198,12 @@ var Config = {
 
   getSpreadsheet: function() {
     var id = PropertiesService.getScriptProperties().getProperty(Config.PROP_KEYS.SHEET_ID);
-    if (id && id.trim()) return SpreadsheetApp.openById(id.trim());
-    return SpreadsheetApp.getActiveSpreadsheet();
+    if (id && id.trim()) {
+      try { return SpreadsheetApp.openById(id.trim()); } catch(e) { throw new Error('Cannot open sheet with ID: ' + id + ' — ' + e.message); }
+    }
+    try { return SpreadsheetApp.getActiveSpreadsheet(); } catch(e) {
+      throw new Error('No SHEET_ID configured and no active spreadsheet found. Set SHEET_ID in Script Properties.');
+    }
   },
 
   getSheet: function(name) {
